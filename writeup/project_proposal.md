@@ -1,0 +1,1 @@
+##### Störmer, V. S., & Alvarez, G. A. (2016). Attention Alters Perceived Attractiveness. Psychological science, 27(4), 563-571.
