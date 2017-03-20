@@ -124,7 +124,13 @@ button[disabled] {
 }
 
 #instText{
-
+	font-size: 30;
+	/*margin: 0 auto;*/
+	text-align:center;
+	top:30%;
+	/*font-weight: bold;*/
+	position: relative;
+	font-family:sans-serif;
 
 }
 

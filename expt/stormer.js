@@ -142,18 +142,22 @@ var practice = {
   pracStart: new Date(),
   pracSeq: mini_design,
   pracData: [],
+  contrastTest: [],
   nTrial : 0,
 
   end: function() {
 
   },
   ready: function() {
+     $("#instText").text("Ready!");
+     showSlide("fixation");
+    setTimeout(practice.fixateInst,1500);
 
   },
   fixateInst: function() {
     $("#instText").text("Fixate the cross");
     showSlide("fixation");
-    setTimeout(practice.fixation,2000);
+    setTimeout(practice.fixation,1200);
   },
   fixation: function() {
     $("#instText").text("");
@@ -164,29 +168,63 @@ var practice = {
       // cue
   cue: function() {
       showSlide("cue");
-      setTimeout(experiment.blank, 66); //70ms
+      setTimeout(practice.blank, 66); //70ms
     },
     // blank
   blank: function() {
     showSlide("fixation");
-    setTimeout(experiment.faces,blankDur);
+    setTimeout(practice.faces,blankDur);
   },
   // faces
   faces: function() {
     showSlide("present-faces");
-    setTimeout(experiment.respSlow, faceDur)
+    setTimeout(practice.resp, faceDur)
   },
-    // response
-  resp: function() {
-    $("#instText").text("");
-        showSlide("fixation");
-  },
+
+  faceTest: function() {
+    // Check whether the participant can actually see the contrast differences on their screen
+    showSlide("present-faces");
+    var startTime = (new Date()).getTime();
+    // Set up a function to react to keyboard input. Functions that are used to react to user input are called *event handlers*. In addition to writing these event handlers, you have to *bind* them to particular events (i.e., tell the browser that you actually want the handler to run when the user performs an action). Note that the handler always takes an <code>event</code> argument, which is an object that provides data about the user input (e.g., where they clicked, which button they pressed).
+    var keyPressHandler = function(event) {
+      // A slight disadvantage of this code is that you have to test for numeric key values; instead of writing code that expresses "*do X if 'Q' was pressed*", you have to do the more complicated "*do X if the key with code 80 was pressed*". A library like [Keymaster](http://github.com/madrobby/keymaster) lets you write simpler code like <code>key('a', function(){ alert('you pressed a!') })</code>, but I've omitted it here. Here, we get the numeric key code from the event object
+      var keyCode = event.which;
+      
+      if (keyCode != 38 && keyCode != 40) {
+        // If a key that we don't care about is pressed, re-attach the handler (see the end of this script for more info)
+        $(document).one("keydown", keyPressHandler);
+        
+      } else {
+        // If a valid key is pressed (code 80 is p, 81 is q),
+        // record the reaction time (current time minus start time), which key was pressed, and what that means (even or odd).
+
+        // $("#ntrial").text(experiment.nTrial);
+        var endTime = (new Date()).getTime(),
+            key = (keyCode == 38) ? "up" : "down",
+            
+            contrastTest = {
+              keypress: key,
+              // stimulus: n,
+              // accuracy: realParity == userParity ? 1 : 0,
+              rt: endTime - startTime
+            };
+        
+        practice.contrastTest.push(contrastTest);
+        // Temporarily clear the number.
+        // $("#number").text("");
+        setTimeout(practice.nextTrial, 500);
+         // experiment.nextTrial();
+      }
+
+  }
+},
+
   nextTrial: function() {
     // If the number of remaining trials is 0, we're done, so call the end function.
     if (practice.pracSeq.length == 0) {
       practice.end();
       return;
-    }
+    };
     practice.nTrial = practice.nTrial + 1;
     $("#ntrial").text(practice.nTrial);
     $("#instText").text("");
@@ -195,14 +233,17 @@ var practice = {
       thisITI = getITI();
       thisTestContrast = randomElement(testContrast);
       if (practice.nTrial < 6) {
-        var faceDur = 2640;
-        var blankDur = 132;
+        faceDur = 330;
+        blankDur = 132;
+        $("#instText").text("Respond");
       } else if ((practice.nTrial < 16) && (practice.nTrial > 5)) {//  after 5 trials
-        var faceDur = 1320;
-        var blankDur = 132;
+        faceDur = 132;
+        blankDur = 132;
+        $("#instText").text("Respond");
       } else {
-        var faceDur = 66;
-        var blankDur = 66;
+        faceDur = 66;
+        blankDur = 66;
+        $("#instText").text("");
       };
 
       var thisCond = practice.pracSeq.shift();
@@ -230,7 +271,7 @@ var practice = {
         $("#cueing").attr('class', leftUp ? cueLoc+" horAlign down":cueLoc+" horAlign up");
       };
 
-      var data = {
+      var pracData = {
         stimulus: thisCond,
         vertical: thisVerticalShifts,
         testLoc: thisTestPos,
@@ -241,32 +282,58 @@ var practice = {
       };
 
       // practice.data.push(data);
-      practice.fixateInst();
-      // if (practice.pracSeq.length < 6) {
-      //   faceDur = 264;
-      //   blankDur = 132;
-      // } else if (practice.pracSeq.length < 16) {//  after 5 trials
-      //   faceDur = 132;
-      //   blankDur = 132;
-      // } else {
-      //   faceDur = 66;
-      //   blankDur = 66;
-      // };
-
+      practice.ready();
 
   },
   // response
-  respSlow: function() {
-    $("#instText").text("Respond Up or Down");
+  resp: function() {
+
+    if (practice.nTrial < 16) {
+        $("#instText").text("Up or Down");
+      } else {
+        faceDur = 66;
+        blankDur = 66;
+        $("#instText").text("");
+      };
+    // Get the current time so we can compute reaction time later.
+    
     showSlide("fixation");
-  },
+    var startTime = (new Date()).getTime();
+    // Set up a function to react to keyboard input. Functions that are used to react to user input are called *event handlers*. In addition to writing these event handlers, you have to *bind* them to particular events (i.e., tell the browser that you actually want the handler to run when the user performs an action). Note that the handler always takes an <code>event</code> argument, which is an object that provides data about the user input (e.g., where they clicked, which button they pressed).
+    var keyPressHandler = function(event) {
+      // A slight disadvantage of this code is that you have to test for numeric key values; instead of writing code that expresses "*do X if 'Q' was pressed*", you have to do the more complicated "*do X if the key with code 80 was pressed*". A library like [Keymaster](http://github.com/madrobby/keymaster) lets you write simpler code like <code>key('a', function(){ alert('you pressed a!') })</code>, but I've omitted it here. Here, we get the numeric key code from the event object
+      var keyCode = event.which;
+      
+      if (keyCode != 38 && keyCode != 40) {
+        // If a key that we don't care about is pressed, re-attach the handler (see the end of this script for more info)
+        $(document).one("keydown", keyPressHandler);
+        
+      } else {
+        // If a valid key is pressed (code 80 is p, 81 is q),
+        // record the reaction time (current time minus start time), which key was pressed, and what that means (even or odd).
 
-  nextTrialSlow: function() {
-
+        // $("#ntrial").text(experiment.nTrial);
+        var endTime = (new Date()).getTime(),
+            key = (keyCode == 38) ? "up" : "down",
+            
+            pracData = {
+              keypress: key,
+              rt: endTime - startTime
+            };
+        
+        practice.pracData.push(pracData);
+        // Temporarily clear the number.
+        // $("#number").text("");
+        setTimeout(practice.nextTrial, 500);
+         // experiment.nextTrial();
+      }
+  };
+ // Here, we actually bind the handler. We're using jQuery's <code>one()</code> function, which ensures that the handler can only run once. This is very important, because generally you only want the handler to run only once per trial. If you don't bind with <code>one()</code>, the handler might run multiple times per trial, which can be disastrous. For instance, if the user accidentally presses P twice, you'll be recording an extra copy of the data for this trial and (even worse) you will be calling <code>experiment.next</code> twice, which will cause trials to be skipped! That said, there are certainly cases where you do want to run an event handler multiple times per trial. In this case, you want to use the <code>bind()</code> and <code>unbind()</code> functions, but you have to be extra careful about properly unbinding.
+    $(document).one("keydown", keyPressHandler);
   }
-
-
 }
+
+
 
 // ## The main event
 // I implement the sequence as an object with properties and methods. The benefit of encapsulating everything in an object is that it's conceptually coherent (i.e. the <code>data</code> variable belongs to this particular sequence and not any other) and allows you to **compose** sequences to build more complicated experiments. For instance, if you wanted an experiment with, say, a survey, a reaction time test, and a memory test presented in a number of different orders, you could easily do so by creating three separate sequences and dynamically setting the <code>end()</code> function for each sequence so that it points to the next. **More practically, you should stick everything in an object and submit that whole object so that you don't lose data (e.g. randomization parameters, what condition the subject is in, etc). Don't worry about the fact that some of the object properties are functions -- mmturkey (the Turk submission library) will strip these out.**
@@ -278,11 +345,11 @@ var experiment = {
 
   // Parameters for this sequence.
   trialSeq: full_design,
-  // sequence backup
-  trialSequence: full_design,
+
   // Experiment-specific parameters - which keys map to odd/even
   // An array to store the data that we're collecting.
   data: [],
+  stimCond: [],
   nTrial: 0,
   // The function that gets called when the sequence is finished.
     end: function() {
@@ -292,6 +359,7 @@ var experiment = {
     showSlide("finished");
     // Wait 1.5 seconds and then submit the whole experiment object to Mechanical Turk (mmturkey filters out the functions so we know we're just submitting properties [i.e. data])
     setTimeout(function() { turk.submit(experiment) }, 1500);
+
     var json = JSON.stringify(experiment)
     console.log(json)
   },
@@ -301,7 +369,7 @@ var experiment = {
 
          // If the number of remaining trials is 0, we're done, so call the end function.
     if (experiment.trialSeq.length == 0) {
-      experiment.end();
+      setTimeout(experiment.end,3000);
       return;
     }
     experiment.nTrial = experiment.nTrial + 1;
@@ -310,7 +378,7 @@ var experiment = {
 
       thisVerticalShifts = randomElement(allVerticalShifts);
       thisITI = getITI();
-      var thisCond = experiment.trialSeq.shift()
+      var thisCond = experiment.trialSeq.shift();
       var testFace = imgDir + "img" + thisCond.face + "_contrast" + thisCond.testContrast + ".png";
       var standardFace = imgDir + "img" + thisCond.face + "_contrast" + standardContrast + ".png";
       var thisCue = thisCond.cue;
@@ -332,17 +400,27 @@ var experiment = {
         $("#cueing").attr('class', leftUp ? cueLoc+" horAlign down":cueLoc+" horAlign up");
       };
 
-      var data = {
-        stimulus: thisCond,
-        vertical: thisVerticalShifts,
+      var stimulus = {
+        // stimulus: thisCond,
+        cue: thisCue,
+        testPos: thisCond.testPos,
+        testContrast: thisCond.testContrast,
+        face: thisCond.face,
         leftUp: leftUp,
         cueLoc: cueLoc,
         ITI: thisITI
 
       };
 
-      experiment.data.push(data);
-      experiment.fixation();
+      experiment.stimCond.push(stimulus);
+
+        experiment.fixation();
+    },
+
+    ready: function() {
+     $("#instText").text("Ready!");
+     showSlide("fixation");
+    setTimeout(experiment.nextTrial,3000);
 
     },
 
@@ -404,7 +482,7 @@ var experiment = {
         experiment.data.push(data);
         // Temporarily clear the number.
         // $("#number").text("");
-        setTimeout(experiment.nextTrial, 500);
+        setTimeout(experiment.nextTrial);
          // experiment.nextTrial();
       }
   };
@@ -417,12 +495,13 @@ var experiment = {
       document.addEventListener('mozfullscreenchange', exitHandler, false);
       document.addEventListener('fullscreenchange', exitHandler, false);
       document.addEventListener('MSFullscreenChange', exitHandler, false);
-      experiment.nextTrial();
+      experiment.ready();
   },
 
   run: function() {
     launchFullScreen(document.documentElement)
     experiment.addFullscreenEvents_setupNext();
+    watchingFull = true;
   },
 
   runFromDead: function() {
@@ -435,4 +514,5 @@ var experiment = {
 
 
 }
+
 
