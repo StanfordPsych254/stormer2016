@@ -190,6 +190,8 @@ function submitData() {
   setTimeout(function() { turk.submit(allData) }, 1500);
   showSlide("submit");
   wait(3000, function() {showSlide("debrief")})
+  var json = JSON.stringify(allData)
+    console.log(json)
 }
 
 

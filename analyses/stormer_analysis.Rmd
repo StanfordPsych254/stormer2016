@@ -1,0 +1,313 @@
+---
+title: 'Class 6b: Data analysis of scalar implicature E5'
+author: "Mike Frank"
+date: "February 11, 2016"
+output: 
+  html_document:
+    toc: true
+---
+# !diagnostics off
+```{r}
+rm(list=ls())
+library(tidyverse)
+library(jsonlite)
+# library(quickpsy)
+# library(boot)
+library(lsr)
+library(ez)
+```
+
+# Data prep
+
+```{r}
+path <- "~/class/StanfordPsych254/stormer/"
+files <- dir(paste0(path,"mturk/sandbox-results/"), 
+             pattern = "*.json")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste0(path, "mturk/sandbox-results/",f)
+  # jd <- fromJSON(paste(readLines(jf), collapse=""))
+  jd <- jsonlite::fromJSON(paste(readLines(jf)), flatten=TRUE)
+  stimCond <- jd$answers$data$stimCond
+  resp <- jd$answers$data$data
+  id <- data.frame(workerid = jd$WorkerId)
+  id <- cbind(id,stimCond,resp)
+
+  d.raw <- bind_rows(d.raw, id)
+}
+
+# Number of participants
+length(unique(d.raw$workerid))
+```
+stringasfactors
+Data cleanup
+
+```{r}
+d.raw[sapply(d.raw, is.character)] <- lapply(d.raw[sapply(d.raw, is.character)], as.factor)
+d.raw$face <- factor(d.raw$face)
+d.raw$testContrast <- factor(d.raw$testContrast)
+
+head(d.raw)
+
+d<-d.raw %>%
+  mutate(testVertical = factor(ifelse((testPos=="left"&leftUp==T)|(testPos=="right"&leftUp==F),"up",
+                               ifelse((testPos=="left"&leftUp==F)|(testPos=="right"&leftUp==T),"down",NA)))) %>%
+  mutate(chosen = factor(ifelse(testVertical==keypress,"test","standard")))
+
+ # d2<-d.raw %>%
+ #  mutate(testVertical = ifelse((testPos=="left"&leftUp==T)|(testPos=="right"&leftUp==F),"up", "down"))
+ # d2 <- d2%>%
+ #   mutate(chosen = ifelse(testVertical==keypress,"test","standard"))
+```
+
+# More sanity checks
+
+Start with a histogram, *ALWAYS*. 
+```{r}
+d %>% ggplot(aes(x=rt)) +
+  geom_histogram() +
+  ggthemes::theme_few()
+
+d %>% ggplot(aes(x=keypress)) +
+  geom_bar() +
+  ggthemes::theme_few()
+
+d %>% ggplot(aes(x=chosen)) +
+  geom_bar() +
+  ggthemes::theme_few()
+
+d %>% ggplot(aes(x=testVertical,fill=chosen)) +
+  geom_bar(position = "dodge") +
+  facet_wrap(~workerid) +
+  ggthemes::theme_few()
+```
+
+```{r}
+tbl <- d %>% 
+  group_by(workerid,cue,testContrast) %>%
+  summarise(n=n(),testChosen=sum(chosen=="test"), 
+            standardChosen=sum(chosen=="standard"),pctTest=testChosen/n*100) 
+
+tbl <- tbl %>%
+  group_by(workerid) %>%
+  mutate(workerMean=mean(pctTest))
+
+t <- t %>%
+  group_by(workerid) %>%
+  mutate(workerMean=mean(pctTest)) %>%
+  ungroup() %>%
+  mutate(grandMean=mean(workerMean)) %>%
+# To calculate within subject errors
+# new value = old value – subject average + grand average
+  mutate(newPct=pctTest-workerMean+grandMean)
+
+
+print(tbl)
+print(t)
+```
+
+Break down by IVs.
+
+```{r}
+d %>% ggplot(aes(x=chosen)) +
+  geom_bar(position="dodge") +
+  facet_grid(.~cue) +
+  ggthemes::theme_few()
+
+d %>% ggplot(aes(x=cue,fill=chosen)) +
+  geom_bar(position = "dodge") +
+  facet_wrap(~workerid) +
+  ggthemes::theme_few()
+
+d %>% ggplot(aes(x=cue,fill=chosen)) +
+  geom_bar(position = "dodge") +
+  facet_wrap(~face) +
+  ggthemes::theme_few()
+
+```
+``` {r}
+# prepare df for t-test & examine individual differences
+d_test <- d[d$testContrast=="3",] %>% 
+  group_by(workerid,cue) %>%
+  summarise(n=n(),testChosen=sum(chosen=="test"), 
+            pctTest=testChosen/n*100)
+print(d_test)
+d_test %>%
+  ggplot(aes(x=cue,y=pctTest,group=workerid, color=workerid)) +
+  geom_line() +
+  geom_point(size=2)
+  # geom_pointrange(aes(ymin=pctTest-0, ymax=pctTest+0))
+  
+```
+pweibull(q, shape, scale = 1, lower.tail = TRUE, log.p = FALSE)
+pnorm(q, mean = 0, sd = 1, lower.tail = TRUE, log.p = FALSE)
+``` {r} 
+# plot psychometric - test face contrast * %test face chosen * cue -> facet by worker
+tbl %>% ggplot(aes(x=testContrast, y=pctTest, group=cue, color=cue)) +
+  geom_line(size=0) +
+  geom_point(size=2.5) +
+  facet_wrap(~workerid)
+
+t<-bind_rows(tbl,tbl)
+t$workerid = as.character(t$workerid)
+t$workerid[11:20] = "aaa"
+t$workerid = as.factor(t$workerid)
+t$pctTest[11:20] = c(5,20,60,80,95,30,45,77.5,87.5,100)
+t$testChosen[11:20] = t$pctTest[11:20]/100*40
+
+# get mean psychometric
+psychometric <- t %>% 
+  group_by(cue,testContrast) %>%
+  # mean and within subject errors
+  dplyr::summarise(avePct=mean(pctTest), se=sd(newPct)/sqrt(n()),
+            ntrial=mean(n),aveTestChosen=mean(testChosen),
+            sumTest=sum(testChosen),sumN=sum(n))
+psychometric <- psychometric %>%
+  mutate(RMScontrast = c(.30,.35,.39,.44,.50))
+print(psychometric)
+psychometric %>%
+  ggplot(aes(x=RMScontrast,y=avePct,group=cue,color=cue)) +
+  geom_pointrange(aes(ymin=avePct-se, ymax=avePct+se))
+
+```
+# fit psychometric functions using MLE
+```{r}
+
+# library('ggplot2')
+# n <- 100
+# x <- c(.2, .4, .6, .8, 1) #luminance
+RMScontrast = c(.30,.35,.39,.44,.50)
+x<-RMScontrast
+n<-psychometric$sumN #n trial per condition
+k <- psychometric$sumTest # number of times that the observer reports that can see the stimulus
+y <- k/n
+cue <- psychometric$cue
+dat <- data.frame(cue,x, k,n, y)
+
+# p<-ggplot()+
+#   geom_point(data=dat,aes(x=x,y=y,color=cue))
+# p
+
+# m<-2 # 2-alternative forced choice
+
+fitting <- function(df){
+  nll <- function(p) { 
+  # phi <- 1/m + (1-1/m) * pweibull(df$x, p[1], p[2]) 
+  phi <- pweibull(df$x, p[1], p[2]) 
+  -sum(df$k * log(phi) + (df$n - df$k) * log(1 - phi))
+  }
+  
+para <- optim(c(.7,.7), nll)$par
+# para
+xseq <- seq(.3,.5,.001)
+yseq <- pweibull(xseq, para[1], para[2])
+# yseq <- 1/m + (1-1/m) * pweibull(xseq, para[1], para[2])
+# curve <- data.frame(xseq,yseq)
+data.frame(xseq,yseq) #return
+}
+
+curves <- plyr::ddply(dat, ~cue, fitting)
+# p<- p+ geom_line(data=curves,aes(x=xseq,y=yseq,color=cue))
+# p
+
+p<- psychometric %>%
+  ggplot(aes(x=RMScontrast,y=avePct,group=cue,color=cue)) +
+  geom_pointrange(aes(ymin=avePct-se, ymax=avePct+se)) +
+  geom_line(data=curves,aes(x=xseq,y=yseq*100,color=cue)) +
+  geom_segment(aes(x=.39,xend=.39, y=-Inf, yend=5),color="black",size=1.4) +
+  ggthemes::theme_few()+ 
+  xlab("Contrast Level of Test Face (RMSE)") +
+  ylab("Test Face Chosen (%)") +
+  theme(legend.position = c(0,1), legend.justification = c(0,1),
+        legend.background= element_rect(fill=NA, color=NA),
+        legend.title = element_blank()) +
+  scale_color_discrete(labels=c("Standard Face Cued","Test Face Cued"),
+                       guide=guide_legend(reverse=TRUE))
+p
+
+# fit<-quickpsy(dat,x,k,n,grouping=.(cue),lapses=TRUE,guess=TRUE,fun=weibull_fun,bootstrap = "none")
+
+```
+
+```{r}
+# test the effect of contrast level on contrast judgments
+aov<-aov(pctTest ~ testContrast + Error(workerid/testContrast),data = t)
+summary(aov)
+aov_etasq<-etaSquared(aov)
+
+m1<- ezANOVA(data=t, dv=pctTest, wid=workerid,within=testContrast,within_full=cue,detailed=TRUE)
+m1
+# library(ez)
+# 
+# m1 <- ezANOVA(data = data.ex4, dv = Recall, wid = Subject, within = .(Task,Valence), type = 3, detailed = TRUE)
+# m1$ANOVA
+```
+
+```{r}
+# conduct a paired t-test (test VS standard face, Contrast=3)
+d_test
+ttest<-t.test(pctTest ~ cue, d_t, paired=TRUE)
+cohensD(pctTest ~ cue, data=d_t, method="paired")
+
+d_t <- t[t$testContrast=="3",]
+
+
+# tt <- t %>%
+#   group_by(workerid,testContrast) %>%
+#   summarise(avePct=mean(pctTest))
+# m2<- ezANOVA(data=tt, dv=avePct, wid=workerid,within=testContrast,detailed=TRUE)
+
+
+```
+
+# Try using just ggplot to do our whole data analysis
+
+```{r}
+ggplot(d, aes(x = stars, y = judgment, col = degree)) + 
+  geom_jitter() + 
+  geom_smooth(method="lm", formula =  y ~ x + I(x^2)) +
+  facet_wrap(~scale)
+```
+
+# Main Analysis (take 1)
+
+Aggregation step. 
+
+```{r}
+ms <- d %>%
+  group_by(scale, degree, stars) %>%
+  summarise(mean = mean(judgment), 
+            sem = sd(judgment) / sqrt(n()), 
+            ci95 = 1.96*sem)
+```
+
+plotting
+
+```{r}
+ggplot(ms, aes(x = stars, y = mean, col = degree)) + 
+  geom_line() + 
+  geom_pointrange(aes(ymin = mean - ci95, 
+                      ymax = mean + ci95)) + 
+  facet_wrap(~scale)
+```
+
+
+# Main Analysis (take 2)
+
+```{r}
+ms <- d %>%
+  group_by(scale, degree, stars) %>%
+  multi_boot_standard(column = "judgment")
+```
+
+Plotting step. 
+
+```{r}
+ggplot(ms, aes(x = stars, y = mean, col = degree)) + 
+  geom_line() + 
+  geom_pointrange(aes(ymin = ci_lower, 
+                      ymax = ci_upper)) + 
+  facet_wrap(~ scale)
+```
+

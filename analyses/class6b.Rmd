@@ -1,0 +1,131 @@
+---
+title: 'Class 6b: Data analysis of scalar implicature E5'
+author: "Mike Frank"
+date: "February 11, 2016"
+output: 
+  html_document:
+    toc: true
+---
+
+Original experiment is [here](http://langcog.stanford.edu/expts/scalar_implicature/experiments/implicatures_e5.html). 
+
+Packages etc. Note, I'm using our own lab-specific package here. You can get it by writing `devtools::install_github("langcog/langcog")`.
+
+```{r}
+rm(list=ls())
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(langcog) 
+library(rjson)
+```
+
+# Data prep
+
+```{r}
+path <- "~/Projects/Scalar Implicature/scalar_implicature/"
+files <- dir(paste0(path,"production-results/e5/"), 
+             pattern = "*.json")
+d.raw <- data.frame()
+
+for (f in files) {
+  jf <- paste0(path, "production-results/e5/",f)
+  jd <- fromJSON(paste(readLines(jf), collapse=""))
+  id <- data.frame(workerid = jd$WorkerId, 
+                   scale = jd$answer$scale,
+                   degree = jd$answer$degree,
+                   stars = jd$answer$manipulation_level,
+                   judgment = as.numeric(jd$answer$judgment),
+                   language = jd$answer$language)
+  d.raw <- bind_rows(d.raw, id)
+}
+
+# Number of participants
+length(unique(d.raw$workerid))
+```
+
+Data cleanup
+
+```{r}
+d <- filter(d.raw, scale != "training1") %>%
+  mutate(stars = as.numeric(as.character(stars))/20) %>%
+  select(-language)
+
+head(d)
+```
+
+# More sanity checks
+
+Start with a histogram, *ALWAYS*. 
+```{r}
+qplot(judgment, data = d, binwidth=1) + 
+  xlim(c(1,6))
+
+```
+
+Break down by IVs.
+
+```{r}
+qplot(judgment, data = d, binwidth=1) + 
+  xlim(c(1,6)) + 
+  facet_grid(.~stars)
+
+qplot(judgment, data = d, binwidth=1) + 
+  xlim(c(1,6)) + 
+  facet_grid(.~scale)
+
+qplot(judgment, data = d, binwidth=1) + 
+  xlim(c(1,6)) + 
+  facet_grid(scale~stars)
+```
+
+# Try using just ggplot to do our whole data analysis
+
+```{r}
+ggplot(d, aes(x = stars, y = judgment, col = degree)) + 
+  geom_jitter() + 
+  geom_smooth(method="lm", formula =  y ~ x + I(x^2)) +
+  facet_wrap(~scale)
+```
+
+# Main Analysis (take 1)
+
+Aggregation step. 
+
+```{r}
+ms <- d %>%
+  group_by(scale, degree, stars) %>%
+  summarise(mean = mean(judgment), 
+            sem = sd(judgment) / sqrt(n()), 
+            ci95 = 1.96*sem)
+```
+
+plotting
+
+```{r}
+ggplot(ms, aes(x = stars, y = mean, col = degree)) + 
+  geom_line() + 
+  geom_pointrange(aes(ymin = mean - ci95, 
+                      ymax = mean + ci95)) + 
+  facet_wrap(~scale)
+```
+
+
+# Main Analysis (take 2)
+
+```{r}
+ms <- d %>%
+  group_by(scale, degree, stars) %>%
+  multi_boot_standard(column = "judgment")
+```
+
+Plotting step. 
+
+```{r}
+ggplot(ms, aes(x = stars, y = mean, col = degree)) + 
+  geom_line() + 
+  geom_pointrange(aes(ymin = ci_lower, 
+                      ymax = ci_upper)) + 
+  facet_wrap(~ scale)
+```
+

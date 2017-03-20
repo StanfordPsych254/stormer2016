@@ -58,9 +58,11 @@ packrat/src*/
 
 # MTurk credentials and data
 auth.json
+settings.json
 my-own-auth.json
 mturk/
-
+mturk/auth.json
+mturk/settings.json
 
 # Specific file keep
 !README.md
