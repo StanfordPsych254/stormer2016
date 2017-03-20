@@ -37,6 +37,7 @@
     -moz-transform: translate(-50%, -0%);
     -ms-transform: translate(-50%, -0%);
     -o-transform: translate(-50%, -0%);
+
 }
 .examples {
   text-align: center;
@@ -83,6 +84,7 @@
   text-align: center;
 }
 
+
 #wrapper {
     width: 1024px;
     margin: 10px auto;
@@ -102,9 +104,15 @@
 }
 
 textarea {
-    font-size: 1em;
-    width: 24em;
-    height: 10em;
+    font-size: 0.8em;
+/*    width: 24em;
+    height: 10em;*/
+}
+.info {
+    font-size:0.7em;
+    line-height: 1.2em;
+    text-align: center;
+
 }
 
 .hideToShow {

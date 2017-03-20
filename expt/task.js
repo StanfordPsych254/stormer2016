@@ -1,5 +1,11 @@
 /* global $z, $, setTimeout, clearTimeout, innerStream, _, log, urlParams, location, Base64 */
-
+function showSlide(id) {
+  // Hide all slides
+  $(".slide").hide();
+  $(".zen-slide").hide();
+  // Show just the slide we want to show
+  $("#"+id).show();
+}
 var getITI = function() {
   return Math.floor(Math.random() * 500) + 1000 // 1000-1500ms
 }
@@ -22,9 +28,15 @@ var instructionCount = 1; // Set the initial instruction page
 var instructionPart = "instructions"; // Set the instruction prefix to start
 
 var nextInstruction = function(){ // get next slide
-  instructionCount++; // add instruction count
+
+if ($(window).width() <= 770) {
+  $z.showSlide("screensmall");
+} else {
+    instructionCount++; // add instruction count
   $z.showSlide(instructionPart + instructionCount); // show slide
   $(document).scrollTop(0);// go to top of page
+
+}
 };
 
 var hideHiddenEnable = function(id){
@@ -68,8 +80,6 @@ function exitHandler()
       {
         $(document.body).css("cursor","auto")
         dead = true;
-        // if (curTrial > 0) {trial.pushData(true);};
-        // if (practice.nTrial > 0 && curTrial <1) {practice.pushData(true);};
           showSlide("full-exit");
       }
   } 
@@ -78,8 +88,8 @@ function exitHandler()
 
 var endExperiment = function() {
   //$z.showSlide("thank-you"); // show the start of the questions
-  window.opener.experimentData = experiment.allData; // save data to parent window
-  window.opener.experiment.end(); // call the experiment end in parent window
+  // window.opener.experimentData = experiment.allData; // save data to parent window
+  // window.opener.experiment.end(); // call the experiment end in parent window
 
   wait(500, function(){
     closeWindow();
@@ -100,76 +110,44 @@ function getTime(pageID) {
     lastTime = recordTime; // replace the last time
 
     allData.push(data);
-  };
+};
 
 // checking window size every 30 seconds
-
  //code goes here that will be run every 1 second (note-  should be changed to 30)
+// var isActive = true;
+// function checkIt(){
+//   nCheck = 1
+//   var myTimer = setInterval(function(){ 
+//         if(instructionPart != "questions") { // if you're not at questions yet...
+//           experiment.recordWindow("windowCheck_" + nCheck);
 
-var isActive = true;
+//           window.onfocus = function () { 
+//             isActive = true; 
+//           }; 
 
-function checkIt(){
-  nCheck = 1
-  var myTimer = setInterval(function(){ 
-        if(instructionPart != "questions") { // if you're not at questions yet...
-          experiment.recordWindow("windowCheck_" + nCheck);
+//           window.onblur = function () { 
+//             isActive = false; 
+//           }; 
 
-          window.onfocus = function () { 
-            isActive = true; 
-          }; 
+//         } else {
+//           clearInterval(myTimer);
+//         }
+//         console.log(isActive);
+//         nCheck ++;
+//   }, 10000);
+// }
 
-          window.onblur = function () { 
-            isActive = false; 
-          }; 
+// // Submitting data
 
-        } else {
-          clearInterval(myTimer);
-        }
-        console.log(isActive);
-        nCheck ++;
-  }, 10000);
-}
-
-// Submitting data
-
-var experiment = {
-  // An array to store the data that we're collecting.
-  allData: [],
-  // The function that gets called when the sequence is finished.
-  radio: function(questionIDs) {
-    $.each(questionIDs, function(index,value) {
-      data = {
-        question: value,
-        answer: $("input:radio[name="+value+"]:checked").val()
-      };
-      allData.push(data);
-    });
-  },
-  open: function(questionID) {
-    data = {
-      question: questionID,
-      answer: $("#"+questionID).val()
-    };
-    allData.push(data);
-  },
-
-  recordCond: function(condition) {
-    data = {
-      question: "condition",
-      answer: condition
-    };
-    allData.push(data);
-  },
-  recordWindow: function(name) {
-    var windowHeight = $(window).height();
-    var windowWidth = $(window).width();
-    data = {
-      question: name,
-      answer: windowHeight + " by " + windowWidth + "; active=" + isActive
-    };
-    allData.push(data);
-  },
-}
+//  var recordWindow= function(name) {
+//     var windowHeight = $(window).height();
+//     var windowWidth = $(window).width();
+//     data = {
+//       question: name,
+//       answer: windowHeight + " by " + windowWidth + "; active=" + isActive
+//     };
+//     allData.push(data);
+//   }
 
 var saveFingerprint =  function() {
   data = {
@@ -181,36 +159,39 @@ var saveFingerprint =  function() {
 
 var lastTime = new Date(); // initialize time on load
 
-// get multiple key press.
-var map = []; // Or you could call it "key"
-onkeydown = onkeyup = function(e){
-    e = e || event; // to deal with IE
-    map[e.keyCode] = e.type == 'keydown';
-    /*insert conditional here*/
-    if(map[69] && map[48] && map[49]){ // CTRL+SHIFT+A
-        askSkip();        
-        map = [];
-    };
-}
-var askSkip = function() {
-    var x;
-    if (confirm("Are you sure you want to skip to the questions?") == true) {
-        startQuestions();
-    }
-}
-
-
 //$z.showSlide("questions5"); // for testing
 $z.showSlide("instructions1"); // This is where the task starts
 // $z.showSlide("start-practice");
 // showSlide("practice-end");
 
 
-
 // TODO: 
 // [ ] Put launcher into Mturk and test it.
 // [ ] Transfer data to launch screen
 // [ ] binned randomized group?
+
+
+function submitInfo() {
+  $(document.body).css("cursor","auto")
+  if ($('#age').val()=="" || !$('input[name="gender"]:checked').val()) {
+    alert("Please enter your age and sex. These information are important for our study.");
+      return
+    };
+    allData.age=[];
+    allData.gender=[];
+    allData.feedback=[];
+    allData.age = $('#age').val();
+    allData.gender = $('input[name="gender"]:checked').val();
+    allData.feedback = $("#feedback").val();
+
+    submitData();
+}
+function submitData() {
+  setTimeout(function() { turk.submit(allData) }, 1500);
+  showSlide("submit");
+  wait(3000, function() {showSlide("debrief")})
+}
+
 
 var imgArray = new Array();
 function preload() {
@@ -248,20 +229,47 @@ var randomize = function(){ // randomize to condition
   if(x == 0) { // If tails, set condition and instruction prefix
      exptFaces = [1,2,3,4,5,6,7,8,9,10];
      pracFaces = [11,12,13,14,15,16,17,18,19,20];
-
   } else { // If heads, set condition and instruction prefix
     exptFaces = [11,12,13,14,15,16,17,18,19,20];
     pracFaces = [1,2,3,4,5,6,7,8,9,10];
-  }
+  };
+  rand ={
+    whichFaces: x
+  };
+  allData.push(rand);
+  factorize();
   nextInstruction();
 };
+
+function factorize() {
+  var factors = {
+  face: exptFaces,
+  testContrast: [1,2,3,4,5],
+  testPos: ['left','right'], //1=left, 2=right
+  cue: ['standard','test']
+  };
+// create full factorial design. rep = 1. unpack=false.
+  var full_design = jsPsych.randomization.factorial(factors, 1);
+    experiment.trialSeq = full_design;
+
+// create mini factorial design for pracice trials (40 trials) //
+  var factors_practice = {
+  face: pracFaces,
+  cue: ['standard','test'],
+  testPos: ['left','right']
+  };
+  var mini_design = jsPsych.randomization.factorial(factors_practice, 1);
+  practice.pracSeq = mini_design;
+  practice.secondPrac = mini_design;
+};
 ///////////////////////////////////////////////////////////////////
-// Set variables for main expt //
-var curTrial = 0;
+// Set variables //
+var curTrial = 0,
+    blockCount = 0;
 var dead = false;
 var rerun = false;
 var allData =[];
-
+// allData.fingerprint = fingerprint;
 allData.practice=[];
 allData.prac2=[];
 allData.experiment=[];
@@ -274,39 +282,16 @@ var testContrast = [1,2,3,4,5],
     testPos= ['left','right'],
     imgDir = "images/FaceStim/";
 
-var factors = {
-  face: exptFaces,
-  testContrast: [1,2,3,4,5],
-  testPos: ['left','right'], //1=left, 2=right
-  cue: ['standard','test']
-}
-// create full factorial design. rep = 1. unpack=false.
-var full_design = jsPsych.randomization.factorial(factors, 1);
 
-
-// create mini factorial design for pracice trials (40 trials) //
-var factors_practice = {
-  face: pracFaces,
-  cue: ['standard','test']
-}
-var mini_design = jsPsych.randomization.factorial(factors_practice, 1);
-function showSlide(id) {
-  // Hide all slides
-  $(".slide").hide();
-  $(".zen-slide").hide();
-  // Show just the slide we want to show
-  $("#"+id).show();
-}
 var pracRepeat=false;
 //////////////////////////////////////////////////////////////////
 
 // ## practice trials
 var practice = {
   pracStart: new Date(),
-  pracSeq: mini_design,
-  secondPrac: mini_design,
   pracCond: [],
-  contrastTest: [],
+  response: [],
+  stimulus: [],
   nTrial : 0,
   taskInstCount: 0, 
   taskInstText: ["Step 1: Fix your gaze on the fixation cross in the center of the screen. You must maintain your gaze on the cross throughout the experiment.",
@@ -401,42 +386,6 @@ var practice = {
     }
   },
 
-  faceTest: function() {
-    // Check whether the participant can actually see the contrast differences on their screen
-    showSlide("present-faces");
-    var startTime = (new Date()).getTime();
-    // Set up a function to react to keyboard input. Functions that are used to react to user input are called *event handlers*. In addition to writing these event handlers, you have to *bind* them to particular events (i.e., tell the browser that you actually want the handler to run when the user performs an action). Note that the handler always takes an <code>event</code> argument, which is an object that provides data about the user input (e.g., where they clicked, which button they pressed).
-    var keyPressHandler = function(event) {
-      // A slight disadvantage of this code is that you have to test for numeric key values; instead of writing code that expresses "*do X if 'Q' was pressed*", you have to do the more complicated "*do X if the key with code 80 was pressed*". A library like [Keymaster](http://github.com/madrobby/keymaster) lets you write simpler code like <code>key('a', function(){ alert('you pressed a!') })</code>, but I've omitted it here. Here, we get the numeric key code from the event object
-      var keyCode = event.which;
-      
-      if (keyCode != 38 && keyCode != 40) {
-        // If a key that we don't care about is pressed, re-attach the handler (see the end of this script for more info)
-        $(document).one("keydown", keyPressHandler);
-        
-      } else {
-        // If a valid key is pressed (code 80 is p, 81 is q),
-        // record the reaction time (current time minus start time), which key was pressed, and what that means (even or odd).
-
-        // $("#ntrial").text(experiment.nTrial);
-        var endTime = (new Date()).getTime(),
-            key = (keyCode == 38) ? "up" : "down",
-            
-            contrastTest = {
-              keypress: key,
-              // stimulus: n,
-              // accuracy: realParity == userParity ? 1 : 0,
-              rt: endTime - startTime
-            };
-        
-        practice.contrastTest.push(contrastTest);
-        // Temporarily clear the number.
-        // $("#number").text("");
-        setTimeout(practice.nextTrial, 500);
-      }
-    }
-  },
-
   nextTrial: function() {
 
     if (practice.nTrial==40) {
@@ -471,8 +420,9 @@ var practice = {
       var testFace = imgDir + "img" + thisCond.face + "_contrast" + thisTestContrast + ".png";
       var standardFace = imgDir + "img" + thisCond.face + "_contrast" + standardContrast + ".png";
       var thisCue = thisCond.cue;
+      var thisTestPos = thisCond.testPos;
       
-      thisTestPos = randomElement(testPos);
+      // thisTestPos = randomElement(testPos);
       testLeft = (thisTestPos == "left");
       $("#left-face").attr('src', testLeft ? testFace:standardFace);
       $("#right-face").attr('src', testLeft ? standardFace:testFace);
@@ -493,14 +443,17 @@ var practice = {
       };
 
       var pracCond = {
-        stimulus: thisCond,
+        cue: thisCue,
+        stimcond: thisCond,
         vertical: thisVerticalShifts,
-        testLoc: thisTestPos,
+        testPos: thisTestPos,
+        testContrast: thisTestContrast,
         leftUp: leftUp,
         cueLoc: cueLoc,
         ITI: thisITI,
         trial: practice.nTrial
       };
+
       if (!pracRepeat){
         allData.practice.push(pracCond);
       } else {
@@ -523,8 +476,6 @@ var practice = {
       } else {
         practice.ready();
       };
-      
-
   },
   // response
   resp: function() {
@@ -660,7 +611,6 @@ var practice = {
     $z.showSlide("taskInst");
     $(document).scrollTop(0);
     }
-  
   }
 }
 
@@ -670,18 +620,27 @@ var experiment = {
 
   extpStart: new Date(),
   // Parameters for this sequence.
-  trialSeq: full_design,
-  // Experiment-specific parameters - which keys map to odd/even
   // An array to store the data that we're collecting.
-  data: [],
-  stimCond: [],
+  stimulus: [],
+  response: [],
   nTrial : 0,
 
   end: function() {
     watchingFull = false;
+    $(document.body).css("cursor","auto")
+    $(".slide, .expt").hide();
     exitFullscreen();
+    showSlide("demographic");
     // Show the finish slide.
-    showSlide("finished");
+    // showSlide("finished");
+
+      //$z.showSlide("thank-you"); // show the start of the questions
+    // window.opener.experimentData = allData; // save data to parent window
+    // window.opener.experiment.end(); // call the experiment end in parent window
+
+    // wait(500, function(){
+    //  window.close();
+    // });
    
   },
 
@@ -689,17 +648,16 @@ var experiment = {
     if (dead) {
       showSlide("full-exit");
     } else {
-    showSlide("expt-start")
-    // showSlide("grey-blank");
-    // setTimeout(experiment.ready,5000);
+    showSlide("expt-start");
     }
   },
   ready: function() {
+    $(document.body).css("cursor","none")
     if (dead) {
           showSlide("full-exit");
     } else {
      $("#instText").text("Ready!");
-     showSlide("fixation");
+    showSlide("fixation");
     setTimeout(experiment.fixateInst,1500);
     }
   },
@@ -713,6 +671,7 @@ var experiment = {
     }
   },
   fixation: function() {
+    $(document.body).css("cursor","none")
     if (dead) {
           showSlide("full-exit");
     } else {
@@ -761,7 +720,7 @@ var experiment = {
     curTrial++
     $("#ntrial").text(curTrial);
     $("#instText").text("");
-
+    console.log(curTrial);
       thisVerticalShifts = randomElement(allVerticalShifts);
       thisITI = getITI();
       var thisCond = experiment.trialSeq.shift();
@@ -787,52 +746,38 @@ var experiment = {
       };
 
 
-      var pracData = {
-        stimulus: thisCond,
-        vertical: thisVerticalShifts,
-        testLoc: thisTestPos,
+      var stimulus = {
+        cue:thisCue,
+        testPos:thisCond.testPos,
+        testContrast: thisCond.testContrast,
+        face: thisCond.face,
         leftUp: leftUp,
         cueLoc: cueLoc,
         ITI: thisITI,
         trial: curTrial
-
       };
 
-      // practice.data.push(data);
-      if (practice.nTrial==1) {
-        $("#introText").text("First, we will practice at a slow pace.");
-        practice.intro();
-      } else if (practice.nTrial==6){
-        $("#introText").text("We will speed up a little bit...");
-        practice.intro();
-      } else if (practice.nTrial==16){
-        $("#introText").text("Now, up to speed. It's FAST!");
-        practice.intro();
+
+      allData.experiment.push(stimulus);
+
+      if (curTrial==1) {
+        experiment.ready();
+      } else if (curTrial==68 || curTrial==135) {
+        experiment.break();
       } else {
-        practice.ready();
+        experiment.fixation();
       };
       
 
   },
   // response
   resp: function() {
-
-    if (practice.nTrial < 16) {
-        $("#instText").text("Up or Down?");
-      } else {
-        faceDur = 66;
-        blankDur = 66;
-        $("#instText").text("Up or Down?");
-      };
     // Get the current time so we can compute reaction time later.
-    
     if (dead) {
           showSlide("full-exit");
     } else {
       showSlide("fixation");
     }
-  
-    
     var startTime = (new Date()).getTime();
     // Set up a function to react to keyboard input. Functions that are used to react to user input are called *event handlers*. In addition to writing these event handlers, you have to *bind* them to particular events (i.e., tell the browser that you actually want the handler to run when the user performs an action). Note that the handler always takes an <code>event</code> argument, which is an object that provides data about the user input (e.g., where they clicked, which button they pressed).
     var keyPressHandler = function(event) {
@@ -851,7 +796,7 @@ var experiment = {
         var endTime = (new Date()).getTime(),
             key = (keyCode == 38) ? "up" : "down",
             
-            pracData = {
+            response = {
               keypress: key,
               // stimulus: n,
               // accuracy: realParity == userParity ? 1 : 0,
@@ -859,14 +804,17 @@ var experiment = {
               trial: curTrial
             };
         
-        practice.pracData.push(pracData);
-        
-          // setTimeout(practice.nextTrial, 500);
-          practice.nextTrial();
+        allData.experiment.push(response);
+        rerun=false;
+        experiment.nextTrial();
       }
   };
  // Here, we actually bind the handler. We're using jQuery's <code>one()</code> function, which ensures that the handler can only run once. This is very important, because generally you only want the handler to run only once per trial. If you don't bind with <code>one()</code>, the handler might run multiple times per trial, which can be disastrous. For instance, if the user accidentally presses P twice, you'll be recording an extra copy of the data for this trial and (even worse) you will be calling <code>experiment.next</code> twice, which will cause trials to be skipped! That said, there are certainly cases where you do want to run an event handler multiple times per trial. In this case, you want to use the <code>bind()</code> and <code>unbind()</code> functions, but you have to be extra careful about properly unbinding.
+     if (!rerun){
     $(document).one("keydown", keyPressHandler);
+    } else {
+      return;
+    };
   },
 
   run: function () {
@@ -874,25 +822,27 @@ var experiment = {
     document.getElementById("start-button").onclick = experiment.nextTrial;
     launchFullScreen(document.documentElement);
     watchingFull = true;
-    practice.addFullscreenEvents_setupNext();
+    experiment.addFullscreenEvents_setupNext();
   },
   runFromDead: function() {
-    if (practice.nTrial > 0) {practice.nTrial = practice.nTrial - 1;}
     dead = false;
     launchFullScreen(document.documentElement)
-    practice.addFullscreenEvents_setupNext();
+    experiment.addFullscreenEvents_setupNext();
   },
   setupNext: function() {
     if (!dead) {
-      if (practice.trial > 0) {
+      if (curTrial > 0) {
         // if (curTrial > 2 && opener.turk.previewMode) {
         //   experiment.end();
         // } else {
           // trial.pushData(false);
           // allData.pushData(false);
+          document.getElementById("start-button").onclick = experiment.fixation;
+          rerun=true;
           showSlide("trial-start");
         // }
-      } else{
+      } else {
+        document.getElementById("start-button").onclick = experiment.nextTrial;
         showSlide("trial-start");
       }
     } else {
@@ -913,7 +863,6 @@ var experiment = {
     //   showSlide("full-exit");
     // }
 
-
   },
 
   addFullscreenEvents_setupNext: function() {
@@ -921,23 +870,19 @@ var experiment = {
       document.addEventListener('mozfullscreenchange', exitHandler, false);
       document.addEventListener('fullscreenchange', exitHandler, false);
       document.addEventListener('MSFullscreenChange', exitHandler, false);
-      practice.setupNext();
+      experiment.setupNext();
   },
-
-  nextTaskInst: function() { // get next slide
-    practice.taskInstCount++; // add instruction count
-    if (practice.taskInstCount==6) {
-      $z.showSlide("start-practice");
-      $(document).scrollTop(0);
-      practice.taskInstCount=0;
-    } else if (practice.taskInstCount<6 && practice.taskInstCount>0) {
-    $("#instImg").attr('src', "images/inst/step"+practice.taskInstCount+".jpg");
-    $("#taskInstText").text(practice.taskInstText[practice.taskInstCount-1]);
-    $z.showSlide("taskInst");
-    $(document).scrollTop(0);
-    }
-  
+  break: function() {
+    $(document.body).css("cursor","auto")
+    blockCount++;
+    $("#block-completed").text(blockCount);
+    showSlide("break");
+  },
+  nextBlock: function() {
+    document.getElementById("start-button").onclick = experiment.ready;
+    showSlide("trial-start");
   }
 }
+
 
 

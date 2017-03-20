@@ -87,7 +87,7 @@
 					Please DO NOT exit fullscreen! We can't use your data unless it's collected in full screen mode.
 				</li>
 				<li>
-				Away
+					Please sit about an arm's length or 20'' away from your monitor.
 				</li>
 				<li>
 					If you are using a laptop, please make sure it is plugged into an external power source.  
@@ -149,7 +149,7 @@
 				</div>
 				<p><br></p>
 				<button class="zen" type="button" onclick="
-				getTime('inst-box');
+				getTime('instructions5');
 				nextInstruction()" style="font-size:0.8em">NEXT</button>
 			</div>
 		</div>
@@ -173,7 +173,7 @@
 			<p></p>
 			<p><br> Ready to start the practice? </p>
 			<button class="zen" type="button" onclick="
-				practice.run()" style="font-size:0.9em">Yes, I'm ready</button>
+				practice.run();getTime('start-practice');" style="font-size:0.9em">Yes, I'm ready</button>
 				<p></p>
 			<button class="zen" type="button" onclick="
 				practice.nextTaskInst()" style="width:auto;font-size:0.9em">No, let me review the instructions</button>
@@ -219,7 +219,7 @@
 </div>
 		<div class="zen-slide" id="screensmall">
 			<div class="centerbox">
-				We're really sorry but the stimulus in this HIT needs to be displayed on a larger screen. If you have an external display you can connect that, or run this HIT on a different computer. Thanks!
+				We're really sorry but this HIT needs to be run on a larger screen. If you have an external display you can connect that, or run this HIT on a different computer. Thank you!
 			</div>
 		</div>
 
@@ -238,179 +238,32 @@
 				<div class="hideToShow"> If you want to practice one more time before starting the experiment, click 'Practice again'.</div>
 				<p></p>
 				<button class="zen" type="button" onclick="
-				experiment.intro()" style="font-size:1em">Next</button>
+				experiment.intro();getTime('practice-end');" style="font-size:1em">Next</button>
 				<button class="zen hideToShow" type="button" onclick="
 				practice.pracAgain()" style="font-size:1em;display: inline-block;">Practice again</button>
 			</div>
 		</div>
 		<div class="slide" id="expt-start">
-			<div class="centerbox" style="text-align: left;width:600px;"> 
+			<div class="centerbox" style="width:600px;"> 
 			This experiment consists of three blocks. <p>Please remember to <strong>maintain your gaze on the fixation cross</strong> throughout each block. <span style="font-size: 0.8em">(Do not shift your gaze to images appearing on your screen except the fixation cross!)</span></p>
 			You will not see instruction texts this time (e.g.,"Ready", "Up or Down?"). Respond as soon as faces disappear. The next trial will start shortly after you respond. 
 			<p style="text-align: center">Click 'Next' when you are ready to begin. <br><br>
 			<button class="zen" type="button" onclick="
-				experiment.intro()" style="font-size:1em;text-align: center">Next</button></p>
+				experiment.run();getTime('expt-start');" style="font-size:1em;text-align: center">Next</button></p>
 			</div>
 		</div>
 
-		<div class="zen-slide" id="instructions33">
-			<div class="zen-slide-center">
-				<p>
-					Thank you for participating in our study today.  We are interested in a very simple question, namely how people pass the time when they have nothing to do.
-				</p>
-				<p><b><u>
-					What you will be doing
-				</u></b></p>
-				<ul>
-					<li>
-						In a few minutes, you will be asked to sit by yourself in your room (without getting up to walk around or falling asleep), in what we will call the "Free Time" Period, which will last from 10-15 minutes.
-					</li>
-					<li>First, you will receive some instructions for the Free Time Period.
-					</li>
-					<li>
-						Second, you will be asked to follow those instructions for the 10-15 minute Free Time Period
-					</li>
-					<li>
-						Third, you will answer some questions on the computer.
-					</li>
-				</ul>
-				<p>Click 'Next' for further instructions.</p>
-				<button class="zen" type="button" onclick="
-				experiment.getTime('instruction4');
-				randomize()">NEXT</button>
+		<div class="slide expt" id="break">
+			<div class="centerbox" style="font-size:30px">
+			You have completed Block <span id="block-completed">{{}}</span>
+			<p></p>
+			<button class="zen" type="button" onclick="
+				experiment.nextBlock();getTime('break');" style="font-size:1em;text-align: center">Continue</button>
 			</div>
 		</div>
 
-
-		<div class="zen-slide" id="inst-active1">
-			<div class="zen-slide-center">
-				<p><b>
-					Free Time Period Guidelines
-				</b></p>
-				<p>
-					During the entertainment period, we would like you to spend the time entertaining yourself with one or more of the activities below: 
-				</p>
-				<ul>
-					<li>
-						Watching a television show or a movie
-					</li>
-					<li>
-						Reading an enjoyable book or magazine
-					</li>
-					<li>
-						Working on a puzzle (e.g., a crossword or sudoku puzzle)
-					</li>
-					<li>
-						Looking at web pages (e.g., Facebook, Youtube)
-					</li>
-					<li>
-						Playing a videogame
-					</li>
-					<li>
-						Listening to music or the radio
-					</li>
-				</ul>
-				<p><b>
-					That is, for the next 10-15 minutes, you should choose whatever activities from the list that you would find most enjoyable.
-				</b></p>
-				<p><b>
-					Feel free to switch from one activity to another if you want.  You may also do more than one at once (e.g., listen to music while surfing the web). The goal is to find something enjoyable to do.
-				</b></p>
-				<p>
-					Remember, your goal should be to have a pleasant experience, as opposed to spending the time focusing on everyday activities or doing work.
-				</p>
-				<p>
-					Click 'Next' for further instructions.
-				</p>
-				<button class="zen" type="button" onclick="
-				experiment.getTime('inst-active1');
-				nextInstruction()">NEXT</button>
-			</div>
-		</div>
-
-	
-
-		<div class="zen-slide" id="inst-active3">
-			<div class="zen-slide-center">
-				<p><b>
-					Here again is the list of activities you can choose from:
-				</b></p>
-				<ul>
-					<li>
-						Watching a television show or a movie
-					</li>
-					<li>
-						Reading an enjoyable book or magazine
-					</li>
-					<li>
-						Working on a puzzle (e.g., a crossword or sudoku puzzle)
-					</li>
-					<li>
-						Looking at web pages (e.g., Facebook, Youtube)
-					</li>
-					<li>
-						Playing a videogame
-					</li>
-					<li>
-						Listening to music or the radio
-					</li>
-				</ul>
-				<p> 
-					Please jot down the three activities from this list that you may enjoy doing during the Free Time Period, on your paper using the paper and pen that you gathered. Then, briefly summarize these activities in the box below.
-				</p>
-				<p>
-					You don't have to do these activities that you write down, but you can keep the list by you during the Free Time Period for your reference.
-				</p>
-				<div class="textblock">
-					<textarea id="active-plan" rows="20" cols="80" placeholder="Activity 1 &#010;Activity 2 &#010;Activity 3 &#010;etc."></textarea>
-				</div>				
-				<button class="zen" type="button" onclick="
-				experiment.open('active-plan');
-				experiment.getTime('inst-active3');
-				nextInstruction()">NEXT</button>
-			</div>
-		</div>
 		<!-- </div> -->
-		<div class="zen-slide" id="inst-active4">
-			<div class="zen-slide-center">
-				<p>
-					In a moment we will begin the 10-15 minute "Free Time" Period.  Please get ready now by gathering the activities you will be doing (e.g., get ready to watch your movie, or get your reading materials, music, videogames or puzzles ready).
-				</p>
-				<p>
-					Are you ready to do the entertaining activities you chose?
-				</p>
-				<input type="radio" name="ready" value="yes" onclick="hideHiddenEnable('readyCheck')">YES<br>
-				<input type="radio" name="ready" value="no" onclick="showHiddenDisable('readyCheck')">NO<br>
-				<button  id="readyCheck" class="zen" type="button" onclick="
-				experiment.getTime('inst-active4');
-				nextInstruction()">NEXT</button>
-				<div class="hideToShow warning">
-					<p><b>
-						You have indicated that you are not ready to do the entertaining activities that you have chosen.
-					</b></p>
-					<p>
-						Please get ready now by gathering the activities you will be doing (e.g., get ready to watch your movie, or get your reading materials, music, videogames or puzzles ready).
-					</p>
-					<p>
-						Click 'Yes' when you are ready to do the activities that you have chosen.
-					</p>
-				</div>
-			</div>
-		</div>
-		<div class="zen-slide" id="inst-active5">
-			<div class="zen-slide-center">
-				<p>
-					When you click 'Next' below, the screen will go blank for 10-15 minutes while you entertain yourself with one or more of the activities you chose (during this time, your browser may automatically refresh the screen once or twice). After that, you will hear a beep and some additional questions will appear on the screen.  At that point, please stop the activity you were doing and answer the questions.
-				</p>
-				<p>
-					Click 'Next' when you are ready to begin the "Free Time" Period.
-				</p>
-				<button class="zen" type="button" onclick="
-				experiment.getTime('inst-active5');
-				startFreePeriod()">NEXT</button>
-			</div>
-		</div>
-
+	
 		<div class="zen-slide" id="free-period">
 			<div class="zen-slide-center">
 				<p class="hideToShow">
@@ -422,356 +275,6 @@
 				experiment.getTime('free-period');
 				startQuestions()">NEXT</button>
 			</div>
-		</div>
-
-		<div class="zen-slide" id="questions1">
-			<!-- This is where we will ask the post questions-->
-			<p class="question-text">
-				How enjoyable was this part of the study?
-			</p>
-			<table><tbody><tr>
-				<td width="11%">Not at all enjoyable</td>
-				<td width="11%"></td>
-				<td width="11%"></td>
-				<td width="11%"></td>
-				<td width="11%">Somewhat enjoyable</td>
-				<td width="11%"></td>
-				<td width="11%"></td>
-				<td width="11%"></td>
-				<td width="11%">Extremely enjoyable</td>
-			</tr>
-			<tr>
-				<td width="11%"><input questionId="enjoy" type="radio" value="1" name="enjoy"></td>
-				<td width="11%"><input questionId="enjoy" type="radio" value="2" name="enjoy"></td>
-				<td width="11%"><input questionId="enjoy" type="radio" value="3" name="enjoy"></td>
-				<td width="11%"><input questionId="enjoy" type="radio" value="4" name="enjoy"></td>
-				<td width="11%"><input questionId="enjoy" type="radio" value="5" name="enjoy"></td>
-				<td width="11%"><input questionId="enjoy" type="radio" value="6" name="enjoy"></td>
-				<td width="11%"><input questionId="enjoy" type="radio" value="7" name="enjoy"></td>
-				<td width="11%"><input questionId="enjoy" type="radio" value="8" name="enjoy"></td>
-				<td width="11%"><input questionId="enjoy" type="radio" value="9" name="enjoy"></td>
-			</tr></tbody></table>
-			<p class="question-text">
-				To what extent did you find your mind wandering during the Free Time Period?
-			</p>
-			<table><tbody><tr>
-				<td width="11%">Not at all</td>
-				<td width="11%"></td>
-				<td width="11%"></td>
-				<td width="11%"></td>
-				<td width="11%">Somewhat</td>
-				<td width="11%"></td>
-				<td width="11%"></td>
-				<td width="11%"></td>
-				<td width="11%">Very much</td>
-			</tr>
-			<tr>
-				<td width="11%"><input questionId="wander" type="radio" value="1" name="wander"></td>
-				<td width="11%"><input questionId="wander" type="radio" value="2" name="wander"></td>
-				<td width="11%"><input questionId="wander" type="radio" value="3" name="wander"></td>
-				<td width="11%"><input questionId="wander" type="radio" value="4" name="wander"></td>
-				<td width="11%"><input questionId="wander" type="radio" value="5" name="wander"></td>
-				<td width="11%"><input questionId="wander" type="radio" value="6" name="wander"></td>
-				<td width="11%"><input questionId="wander" type="radio" value="7" name="wander"></td>
-				<td width="11%"><input questionId="wander" type="radio" value="8" name="wander"></td>
-				<td width="11%"><input questionId="wander" type="radio" value="9" name="wander"></td>
-			</tr></tbody></table>
-			<p class="question-text">
-				How hard was it to concentrate on what you chose to think about?
-			</p>
-			<table><tbody><tr>
-				<td width="11%">Not at all</td>
-				<td width="11%"></td>
-				<td width="11%"></td>
-				<td width="11%"></td>
-				<td width="11%">Somewhat</td>
-				<td width="11%"></td>
-				<td width="11%"></td>
-				<td width="11%"></td>
-				<td width="11%">Very much</td>
-			</tr>
-			<tr>
-				<td width="11%"><input questionId="concentrate" type="radio" value="1" name="concentrate"></td>
-				<td width="11%"><input questionId="concentrate" type="radio" value="2" name="concentrate"></td>
-				<td width="11%"><input questionId="concentrate" type="radio" value="3" name="concentrate"></td>
-				<td width="11%"><input questionId="concentrate" type="radio" value="4" name="concentrate"></td>
-				<td width="11%"><input questionId="concentrate" type="radio" value="5" name="concentrate"></td>
-				<td width="11%"><input questionId="concentrate" type="radio" value="6" name="concentrate"></td>
-				<td width="11%"><input questionId="concentrate" type="radio" value="7" name="concentrate"></td>
-				<td width="11%"><input questionId="concentrate" type="radio" value="8" name="concentrate"></td>
-				<td width="11%"><input questionId="concentrate" type="radio" value="9" name="concentrate"></td>
-			</tr></tbody></table>
-			<button class="zen" type="button" onclick="
-			experiment.radio(['enjoy','wander','concentrate']);
-			experiment.getTime('questions1');
-			nextInstruction()">NEXT</button>
-		</div>
-
-	<div class="zen-slide" id="questions2">
-			<!-- This is where we will ask the post questions-->
-			<p class="question-text">
-				During the Free Time Period, how much time did you spend (if any) doing each of the following?
-			</p>
-			<table class="blockTable"><tbody>
-			<tr>
-				<td width="30%"></td>
-				<td width="10%">0 minutes<br>(no time)</td>
-				<td width="10%">1-2 minutes</td>
-				<td width="10%">3-4 minutes</td>
-				<td width="10%">5-6 minutes</td>
-				<td width="10%">7-8 minutes</td>
-				<td width="10%">9-10 minutes</td>
-				<td width="10%">11-12 minutes</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td width="30%">Fell asleep</td>
-				<td ><input questionId="asleep" type="radio" value="0" name="asleep"></td>
-				<td ><input questionId="asleep" type="radio" value="1" name="asleep"></td>
-				<td ><input questionId="asleep" type="radio" value="3" name="asleep"></td>
-				<td ><input questionId="asleep" type="radio" value="5" name="asleep"></td>
-				<td ><input questionId="asleep" type="radio" value="7" name="asleep"></td>
-				<td ><input questionId="asleep" type="radio" value="9" name="asleep"></td>
-				<td ><input questionId="asleep" type="radio" value="11" name="asleep"></td>
-			</tr>
-			<tr>
-				<td width="30%">Talked to someone on my cell phone or land line</td>
-				<td ><input questionId="phonetalk" type="radio" value="0" name="phonetalk"></td>
-				<td ><input questionId="phonetalk" type="radio" value="1" name="phonetalk"></td>
-				<td ><input questionId="phonetalk" type="radio" value="3" name="phonetalk"></td>
-				<td ><input questionId="phonetalk" type="radio" value="5" name="phonetalk"></td>
-				<td ><input questionId="phonetalk" type="radio" value="7" name="phonetalk"></td>
-				<td ><input questionId="phonetalk" type="radio" value="9" name="phonetalk"></td>
-				<td ><input questionId="phonetalk" type="radio" value="11" name="phonetalk"></td>
-			</tr>
-			<tr>
-				<td width="30%">Texted someone</td>
-				<td ><input questionId="phonetext" type="radio" value="0" name="phonetext"></td>
-				<td ><input questionId="phonetext" type="radio" value="1" name="phonetext"></td>
-				<td ><input questionId="phonetext" type="radio" value="3" name="phonetext"></td>
-				<td ><input questionId="phonetext" type="radio" value="5" name="phonetext"></td>
-				<td ><input questionId="phonetext" type="radio" value="7" name="phonetext"></td>
-				<td ><input questionId="phonetext" type="radio" value="9" name="phonetext"></td>
-				<td ><input questionId="phonetext" type="radio" value="11" name="phonetext"></td>
-			</tr>
-			<tr>
-				<td width="30%">Used my cell phone to do something else (e.g., play a game)</td>
-				<td ><input questionId="phonegame" type="radio" value="0" name="phonegame"></td>
-				<td ><input questionId="phonegame" type="radio" value="1" name="phonegame"></td>
-				<td ><input questionId="phonegame" type="radio" value="3" name="phonegame"></td>
-				<td ><input questionId="phonegame" type="radio" value="5" name="phonegame"></td>
-				<td ><input questionId="phonegame" type="radio" value="7" name="phonegame"></td>
-				<td ><input questionId="phonegame" type="radio" value="9" name="phonegame"></td>
-				<td ><input questionId="phonegame" type="radio" value="11" name="phonegame"></td>
-			</tr>
-			<tr>
-				<td width="30%">Chatted with someone using an Instant Messenger program or Facebook </td>
-				<td ><input questionId="imchat" type="radio" value="0" name="imchat"></td>
-				<td ><input questionId="imchat" type="radio" value="1" name="imchat"></td>
-				<td ><input questionId="imchat" type="radio" value="3" name="imchat"></td>
-				<td ><input questionId="imchat" type="radio" value="5" name="imchat"></td>
-				<td ><input questionId="imchat" type="radio" value="7" name="imchat"></td>
-				<td ><input questionId="imchat" type="radio" value="9" name="imchat"></td>
-				<td ><input questionId="imchat" type="radio" value="11" name="imchat"></td>
-			</tr>
-			<tr>
-				<td width="30%">Opened other windows on my computer, such as Facebook</td>
-				<td ><input questionId="openwindow" type="radio" value="0" name="openwindow"></td>
-				<td ><input questionId="openwindow" type="radio" value="1" name="openwindow"></td>
-				<td ><input questionId="openwindow" type="radio" value="3" name="openwindow"></td>
-				<td ><input questionId="openwindow" type="radio" value="5" name="openwindow"></td>
-				<td ><input questionId="openwindow" type="radio" value="7" name="openwindow"></td>
-				<td ><input questionId="openwindow" type="radio" value="9" name="openwindow"></td>
-				<td ><input questionId="openwindow" type="radio" value="11" name="openwindow"></td>
-			</tr>
-		</tbody></table>
-			<table class="blockTable"><tbody>
-			<tr>
-				<td width="30%"></td>
-				<td width="10%">0 minutes<br>(no time)</td>
-				<td width="10%">1-2 minutes</td>
-				<td width="10%">3-4 minutes</td>
-				<td width="10%">5-6 minutes</td>
-				<td width="10%">7-8 minutes</td>
-				<td width="10%">9-10 minutes</td>
-				<td width="10%">11-12 minutes</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td width="30%">Checked my e-mail</td>
-				<td ><input questionId="email" type="radio" value="0" name="email"></td>
-				<td ><input questionId="email" type="radio" value="1" name="email"></td>
-				<td ><input questionId="email" type="radio" value="3" name="email"></td>
-				<td ><input questionId="email" type="radio" value="5" name="email"></td>
-				<td ><input questionId="email" type="radio" value="7" name="email"></td>
-				<td ><input questionId="email" type="radio" value="9" name="email"></td>
-				<td ><input questionId="email" type="radio" value="11" name="email"></td>
-			</tr>
-			<tr>
-				<td width="30%">Played a videogame </td>
-				<td ><input questionId="videogame" type="radio" value="0" name="videogame"></td>
-				<td ><input questionId="videogame" type="radio" value="1" name="videogame"></td>
-				<td ><input questionId="videogame" type="radio" value="3" name="videogame"></td>
-				<td ><input questionId="videogame" type="radio" value="5" name="videogame"></td>
-				<td ><input questionId="videogame" type="radio" value="7" name="videogame"></td>
-				<td ><input questionId="videogame" type="radio" value="9" name="videogame"></td>
-				<td ><input questionId="videogame" type="radio" value="11" name="videogame"></td>
-			</tr>
-			<tr>
-				<td width="30%">Read a book or magazine for fun </td>
-				<td ><input questionId="read" type="radio" value="0" name="read"></td>
-				<td ><input questionId="read" type="radio" value="1" name="read"></td>
-				<td ><input questionId="read" type="radio" value="3" name="read"></td>
-				<td ><input questionId="read" type="radio" value="5" name="read"></td>
-				<td ><input questionId="read" type="radio" value="7" name="read"></td>
-				<td ><input questionId="read" type="radio" value="9" name="read"></td>
-				<td ><input questionId="read" type="radio" value="11" name="read"></td>
-			</tr>
-			<tr>
-				<td width="30%">Worked on a puzzle (e.g., a crossword or sudoku puzzle)</td>
-				<td ><input questionId="puzzle" type="radio" value="0" name="puzzle"></td>
-				<td ><input questionId="puzzle" type="radio" value="1" name="puzzle"></td>
-				<td ><input questionId="puzzle" type="radio" value="3" name="puzzle"></td>
-				<td ><input questionId="puzzle" type="radio" value="5" name="puzzle"></td>
-				<td ><input questionId="puzzle" type="radio" value="7" name="puzzle"></td>
-				<td ><input questionId="puzzle" type="radio" value="9" name="puzzle"></td>
-				<td ><input questionId="puzzle" type="radio" value="11" name="puzzle"></td>
-			</tr>
-			<tr>
-				<td width="30%">Watched television or a movie</td>
-				<td ><input questionId="tvmovie" type="radio" value="0" name="tvmovie"></td>
-				<td ><input questionId="tvmovie" type="radio" value="1" name="tvmovie"></td>
-				<td ><input questionId="tvmovie" type="radio" value="3" name="tvmovie"></td>
-				<td ><input questionId="tvmovie" type="radio" value="5" name="tvmovie"></td>
-				<td ><input questionId="tvmovie" type="radio" value="7" name="tvmovie"></td>
-				<td ><input questionId="tvmovie" type="radio" value="9" name="tvmovie"></td>
-				<td ><input questionId="tvmovie" type="radio" value="11" name="tvmovie"></td>
-			</tr>
-			<tr>
-				<td width="30%">Listened to music or the radio</td>
-				<td ><input questionId="music" type="radio" value="0" name="music"></td>
-				<td ><input questionId="music" type="radio" value="1" name="music"></td>
-				<td ><input questionId="music" type="radio" value="3" name="music"></td>
-				<td ><input questionId="music" type="radio" value="5" name="music"></td>
-				<td ><input questionId="music" type="radio" value="7" name="music"></td>
-				<td ><input questionId="music" type="radio" value="9" name="music"></td>
-				<td ><input questionId="music" type="radio" value="11" name="music"></td>
-			</tr>
-			<tr>
-				<td width="30%">Did work or schoolwork </td>
-				<td ><input questionId="work" type="radio" value="0" name="work"></td>
-				<td ><input questionId="work" type="radio" value="1" name="work"></td>
-				<td ><input questionId="work" type="radio" value="3" name="work"></td>
-				<td ><input questionId="work" type="radio" value="5" name="work"></td>
-				<td ><input questionId="work" type="radio" value="7" name="work"></td>
-				<td ><input questionId="work" type="radio" value="9" name="work"></td>
-				<td ><input questionId="work" type="radio" value="11" name="work"></td>
-			</tr>
-			<tr>
-				<td width="30%">Wrote things or doodled on paper</td>
-				<td ><input questionId="write" type="radio" value="0" name="write"></td>
-				<td ><input questionId="write" type="radio" value="1" name="write"></td>
-				<td ><input questionId="write" type="radio" value="3" name="write"></td>
-				<td ><input questionId="write" type="radio" value="5" name="write"></td>
-				<td ><input questionId="write" type="radio" value="7" name="write"></td>
-				<td ><input questionId="write" type="radio" value="9" name="write"></td>
-				<td ><input questionId="write" type="radio" value="11" name="write"></td>
-			</tr>
-			<tr>
-				<td width="30%">Talked with someone</td>
-				<td ><input questionId="talk" type="radio" value="0" name="talk"></td>
-				<td ><input questionId="talk" type="radio" value="1" name="talk"></td>
-				<td ><input questionId="talk" type="radio" value="3" name="talk"></td>
-				<td ><input questionId="talk" type="radio" value="5" name="talk"></td>
-				<td ><input questionId="talk" type="radio" value="7" name="talk"></td>
-				<td ><input questionId="talk" type="radio" value="9" name="talk"></td>
-				<td ><input questionId="talk" type="radio" value="11" name="talk"></td>
-			</tr>
-		</tbody></table>
-			<button class="zen" type="button" onclick="
-			experiment.radio(['asleep','phonetalk','phonetext','phonegame','imchat','openwindow','email','videogame','read','puzzle','tvmovie','music','work','write','talk']);
-			experiment.getTime('questions2');
-			nextInstruction()">NEXT</button>
-		</div>
-
-		<div class="zen-slide" id="questions3">
-			<p class="question-text">
-				During the Free Time Period, were you alone or was someone else in the room?
-			</p>
-			<table><tbody><tr>
-				<td width="33%">I was alone</td>
-				<td width="33%">Someone else was there for part of the time</td>
-				<td width="33%">Someone else was there the entire time Very much</td>
-			</tr>
-			<tr>
-				<td><input questionId="people-around" type="radio" value="alone" name="people-around"></td>
-				<td><input questionId="people-around" type="radio" value="parttime" name="people-around"></td>
-				<td><input questionId="people-around" type="radio" value="fulltime" name="people-around"></td>
-			</tr></tbody></table>
-			<button class="zen" type="button" onclick="
-			experiment.radio(['people-around']);
-			experiment.getTime('questions3');
-			nextInstruction()">NEXT</button>
-		</div>
-
-		<div class="zen-slide" id="questions4">
-			<p class="question-text">
-				Did anything else occur during the free period that disrupted you?
-			</p>
-			<div class="textblock">
-				<textarea id="disruption" rows="20" cols="80"></textarea>
-			</div>
-			<button class="zen" type="button" onclick="
-			experiment.open('disruption');
-			experiment.getTime('questions4');
-			nextInstruction()">NEXT</button>
-		</div>
-
-		<div class="zen-slide" id="questions5">
-			<p class="question-text">
-				At the beginning of the experiment, how were you told to spend your time during the Free Time Period?
-			</p>
-			<table><tbody>
-				<tr>
-				<td width="4%"><input questionId="manipCheck" type="radio" value="planning" name="manipCheck"></td>
-				<td width="60%" class="left-align">Planning out the rest of my day</td>
-			</tr>
-			<tr>
-				<td width="4%"><input questionId="manipCheck" type="radio" value="think" name="manipCheck"></td>
-				<td width="60%" class="left-align">Entertaining myself with my thoughts as best I could</td>
-			</tr>
-			<tr>
-				<td width="4%"><input questionId="manipCheck" type="radio" value="active" name="manipCheck"></td>
-				<td width="60%" class="left-align">Spending the time entertaining myself with one or more activities from a list</td>
-			</tr>
-			<tr>
-				<td width="4%"><input questionId="manipCheck" type="radio" value="none" name="manipCheck"></td>
-				<td width="60%" class="left-align">I wasn't given any instructions on how to spend the time</td>
-			</tr>
-		</tbody></table>
-			<button class="zen" type="button" onclick="
-			experiment.radio(['manipCheck']);
-			experiment.getTime('questions5');
-			startCog()">NEXT</button>
-			<!-- endExperiment() before cognitive tasks -->
 		</div>
 
 		<!-- PUT Manipulation check and did anything else occur during the free period that disrupted you? (e.g. computer going to sleep?) -->
@@ -787,10 +290,32 @@
 			Thanks! That's the end of the study.  This window should now close automatically in a few seconds.
 		</div>
 
+		<div class="slide info" id="demographic">
+     		<p><br>Thank you for participating in this study! <br>Please answer the following questions. <br>
+    	    <p>Did you run into any issues? <br>&nbsp;&nbsp;
+ 			<textarea id="feedback" rows=5 cols=50></textarea></p>
 
-		<!-- Here is all the stuff necessary for cognitive tasks -->
+   		 	<p>What is your gender?&nbsp;&nbsp;
+    		<input type="radio" name="gender" value="m">Male&nbsp;&nbsp;
+    		<input type="radio" name="gender" value="f">Female</p>
+    		<p>What is your age?&nbsp;&nbsp;
+    		<input type="text" id="age" /><br /></p>
 
+    		<button class="zen" type="button" onclick="
+			submitInfo();getTime('demographic');">Submit</button>
+    		</p>
+		</div>
+		<div class="slide info" id="submit">
+			<p><br>Submitting to Mechanical Turk...</p>
+		</div>
+		<div class="slide info" id="debrief" style="text-align: justify">
+			<p><br>Thank you for completing the study!</p>
+			<p> This study aims to investigate whether attention drawn by the abrupt appearance of a visual stimulus can alter how people perceive objects. </p>
+			<P> Thanks again for participating. Please click the button below to finish the experiment.</P>
+				<button class="zen" type="button" onclick="
+			endExperiment();getTime('debrief');" style="height: auto;width: auto">End</button>
 
+		</div>
 
 	</body>
 
