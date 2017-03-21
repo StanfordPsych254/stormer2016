@@ -4,6 +4,7 @@
 <head>
 	<title>Face Contrast Experiment</title>
     <script src="js/underscore-min.js"></script>
+    <script src="js/underscore.js"></script>
     <script src="jquery-1.11.2.min.js"></script>
 	<script src="js/zen-0.4.js"></script>
 	<script src="js/json2.js"></script>
@@ -98,7 +99,7 @@
 				</p>
 				<button class="zen" type="button" onclick="
 				getTime('instructions3');
-				preload(preloadComplete);"">NEXT</button>
+				preload(preloadComplete);">NEXT</button>
 			</div>
 		</div>
 		
@@ -280,7 +281,7 @@
     		<input type="text" id="age" /><br /></p>
 
     		<button class="zen" type="button" onclick="
-			submitInfo();getTime('demographic');">Submit</button>
+			submitInfo();;">Submit</button>
     		</p>
 		</div>
 		<div class="slide info" id="submit">
@@ -289,10 +290,10 @@
 		<div class="slide info" id="debrief" style="text-align: justify">
 			<p><br>Thank you for completing the study!</p>
 			<p> This study aims to investigate whether attention drawn by the abrupt appearance of a visual stimulus can alter how people perceive objects. </p>
-			<P> Thanks again for participating. Please click the button below to finish the experiment.</P>
-				<button class="zen" type="button" onclick="
-			endExperiment();getTime('debrief');" style="height: auto;width: auto">End</button>
-
+			<P> Thanks again for participating. </p><!-- Please click the button below to finish the experiment.</P> -->
+				<!-- <button class="zen" type="button" onclick="
+			getTime('debrief');" style="height: auto;width: auto">End</button>
+ -->
 		</div>
 
 	</body>

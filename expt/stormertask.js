@@ -88,8 +88,8 @@ function exitHandler()
 
 var endExperiment = function() {
   //$z.showSlide("thank-you"); // show the start of the questions
-  // window.opener.experimentData = experiment.allData; // save data to parent window
-  // window.opener.experiment.end(); // call the experiment end in parent window
+  window.opener.allData = allData; // save data to parent window
+  window.opener.experiment.end(); // call the experiment end in parent window
 
   wait(500, function(){
     closeWindow();
@@ -619,7 +619,15 @@ var experiment = {
     $(document.body).css("cursor","auto")
     $(".slide, .expt").hide();
     exitFullscreen();
-    showSlide("demographic");
+    window.opener.allData = allData; // save data to parent window
+    window.opener.experiment.end(); // call the experiment end in parent window
+
+  wait(500, function(){
+    closeWindow();
+  });
+    // showSlide("demographic");
+
+
     // Show the finish slide.
     // showSlide("finished");
 

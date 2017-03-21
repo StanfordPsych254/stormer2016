@@ -118,6 +118,36 @@
 
     </div>
 
+    <div class="slide info" id="demographic">
+        <p><br>Thank you for participating in this study! <br>Please answer the following questions.<br><p>Did you run into any issues while doing this experiment? <br>&nbsp;&nbsp;
+      <textarea id="feedback" rows=5 cols=50></textarea></p>
+
+      <p>Feel free to leave any other comments here   <br>&nbsp;&nbsp;
+      <textarea id="feedback2" rows=5 cols=50></textarea></p>
+
+        <p>What is your gender?&nbsp;&nbsp;
+        <input type="radio" name="gender" value="m">Male&nbsp;&nbsp;
+        <input type="radio" name="gender" value="f">Female</p>
+        <p>What is your age?&nbsp;&nbsp;
+        <input type="text" id="age" /><br /></p>
+
+        <p><button class="zen" type="button" onclick="
+      submitInfo();" style="margin:auto" >Submit</button></p>
+        </p>
+    </div>
+    <div class="slide info" id="submit">
+      <p><br>Submitting to Mechanical Turk...</p>
+    </div>
+    <div class="slide info" id="debrief" style="text-align: justify">
+      <p><br>Thank you for completing the study!</p>
+      <p> This study aims to investigate whether attention drawn by the abrupt appearance of a visual stimulus can alter how people perceive objects. </p>
+      <P> Thanks again for participating. </p><!-- Please click the button below to finish the experiment.</P>
+        <button class="zen" type="button" onclick=""
+         style="height: auto;width: auto;margin:auto">End</button> -->
+         <!-- endExperiment();getTime('debrief'); -->
+
+    </div>
+
     <div id="done">
       <p>Thank you for completing the study.</p>
       <p>Please click the 'Submit HIT' button below.</p>

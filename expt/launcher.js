@@ -3,12 +3,18 @@
 var wait = function(msec, fn) {
   setTimeout(fn, msec);
 };
+function showSlide(id) {
+  // Hide all slides
+  $(".slide").hide();
+  $(".zen-slide").hide();
+  // Show just the slide we want to show
+  $("#"+id).show();
+}
 
 var fsIE6 = function(paramString) {
   window.opener=self;
   var taskWindow = window.open("stormertask.html", "fullscreen", "fullscreen,height="+screen.height+",width="+screen.width+"directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,scrollbars=no,resizable=no");
 };
-
 $(document).ready(function() {
   window.opener = self;
   if (typeof urlParams["workerId"] == "undefined") {
@@ -48,15 +54,39 @@ var mobileAlert = function(){
   }
 }
 
+
 var experiment = {
   end: function() {
     // Wait 1.5 seconds and then submit the whole experiment object to Mechanical Turk (mmturkey filters out the functions so we know we're just submitting properties [i.e. data])
     // setTimeout(function() { turk.submit(experimentData) }, 1500);
+    // setTimeout(function() { turk.submit(allData) }, 1500);
       $("#launch-screen, #launch").hide();
       // $("#done").show();
       $("#demographic").show();
 
   }
+}
+
+function submitInfo() {
+  $(document.body).css("cursor","auto")
+  if ($('#age').val()=="" || !$('input[name="gender"]:checked').val()) {
+    alert("Please enter your age and sex. These information are important for our study.");
+      return
+    };
+    allData.age=[];
+    allData.gender=[];
+    allData.feedback=[];
+    allData.age = $('#age').val();
+    allData.gender = $('input[name="gender"]:checked').val();
+    allData.feedback = $("#feedback").val();
+    allData.comments = $("#feedback2").val();
+
+    setTimeout(function() { turk.submit(allData) }, 1500);
+    var json = JSON.stringify(allData)
+    console.log(json)
+    showSlide("submit");
+    wait(3000, function() {showSlide("debrief")});
+    // submitData();
 }
 
 // to skip
