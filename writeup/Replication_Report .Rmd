@@ -12,44 +12,59 @@ output:
 <!-- Replication reports should all use this template to standardize reporting across projects.  These reports will be public supplementary materials that accompany the summary report(s) of the aggregate results. -->
 
 ##Introduction
+In their study, Störmer & Alvarez (2016) tested whether attention can alter the appearance of real-world stimuli. They asked three questions: **1)** Does attention alter perceived attractiveness of faces? **2)** Is the change in attractiveness judgments driven by exogenous (involuntary) attention? **3)** Does the attentional cue influence attractive judgments by modulating the apparent local contrast of the faces? Their results showed that attention altered the perception of facial attractiveness which belongs to higher-level aspects of perception. **In the current replication project, we aim to replicate Experiment 3 of the original study in which the authors found that attention increased the apparent contrast around the eye region of faces which has been reported to modulate facial attractiveness.**
 
-[No abstract is needed.]  Each replication project will have a straightforward, no frills report of the study and results.  These reports will be publicly available as supplementary material for the aggregate report(s) of the project as a whole.  Also, to maximize project integrity, the intro and methods will be written and critiqued in advance of data collection.  Introductions can be just 1-2 paragraphs clarifying the main idea of the original study, the target finding for replication, and any other essential information.  It will NOT have a literature review -- that is in the original publication. You can write both the introduction and the methods in past tense.  
-
-In their study, Störmer & Alvarez (2016, Psychological Science) tested whether attention can alter the appearance of real-world stimuli. They asked three questions: 1) Does attention alter perceived attractiveness of faces? 2) Is the change in attractiveness judgments driven by exogenous (involuntary) attention? 3) Does the attentional cue influence attractive judgments by modulating the apparent local contrast of the faces? There results showed that attention altered the perception of facial attractiveness which belongs to higher-level aspects of perception. In the current replication project, we aim to replicate Experiment 3 of their study in which they found that attention increased the apparent contrast around the eye region of the faces which has been reported to be correlated with attractiveness.
+***
 
 ##Methods
 
 ###Power Analysis
-The effect size reported in the original paper was η^2=0.30 (t(15) = 2.51, p = .02). Post hoc power analysis using G*Power indicated that the power of the original study was 0.65. We would need 22 participants to achieve 80% power, 29 participants to achieve 90% power, and 35 participants to achieve 95% power to be able to detect the reported effect size. We aim to acieve 80% power. However, to shorten the duration of the experiment for each participant, we are going to split the experiment into halves and double the number of participants. That will give us a sample size of 44.
-
-Original effect size, power analysis for samples to achieve 80%, 90%, 95% power to detect that effect size.  Considerations of feasibility for selecting planned sample size.
+The effect size for the key statistical test (the paired-samples *t* test) reported in the original paper was $\eta^2=0.30$. We computed *Cohen's d~z~* based on statistics provided in the paper (55.8% vs. 45.8%, $t$(15) = 2.51, $p$ = .02, $\eta^2$=0.30).
+```{r}
+N <- 16
+meanDiff <- 55.8 - 45.8
+t <- 2.51  # t = meanDiff / se_of_meanDiff
+se_d <- meanDiff/t
+s_d <- se_d * sqrt(N) # standard deviation of the mean differences
+d_z <- meanDiff / s_d
+# also equals
+d_z <- t/sqrt(N)
+```
+Based on the computed effect size of *d~z~* = `r d_z`, we performed post hoc power analysis using G*Power. The analysis indicated that the power of the original study was _0.65_. We would need a sample size of _N_ = 22 to achieve 80% power, _N_ = 29 to achieve 90% power, and _N_ = 35 to achieve 95% power to be able to detect the reported effect size. We aim to acieve 80% power. However, to shorten the duration of the experiment for each participant, we are going to split the experiment into halves and double the number of participants. That will give us _N_ = 44.
 
 ###Planned Sample
-
-Planned sample size and/or termination rule, sampling frame, known demographics if any, preselection rules if any.
+We plan to recruit 44 US participants on mTruk. 
+<!--Planned sample size and/or termination rule, sampling frame, known demographics if any, preselection rules if any.-->
 
 ###Materials
-"A small black fixation cross (0.5°×0.5°) was presented in the center of the screen throughout the experiment. Two small horizontal lines (~0.5° long) were presented to the left and right of fixation and served as landmarks for the horizontal midline of the screen. The target display consisted of two faces (each 8°×6°) that were presented to the left and right of fixation at an eccentricity of 6°. The face images were chosen from 20 images of female Caucasian faces taken from Bronstad and Russell’s (2007) database. They were converted to gray scale and cropped such that only their inner features were visible. All the faces were matched in overall brightness (104 cd/m2), but the contrast of the eye region was systematically manipulated for each face. Specifically, a mask covering the eyes and the eyebrows was created for each face, and the contrast within that mask was manipulated by parametrically changing the standard deviation of that section of the image using MATLAB. For each face, five different contrast levels were created. These levels were measured in terms of root-mean-square error (RMSE) of the pixels’ luminance values within the masked region. Contrast levels of 0.30, 0.35, 0.39, 0.44, and 0.50 RMSE were used. On every trial, the contrast around the eyes of one face, the standard face, was fixed at Level 3, and the contrast around the eyes of the other face, the test face, was randomly chosen from the five contrast levels. The left-right positions of the standard and test faces were randomized across trials. In each target display, one of the faces was shifted slightly upward from the horizontal midline, and the other face was shifted slightly downward from the midline (shift of ~0.5° each direction). A small black circle (diameter of 0.6°) presented on the left or right served as the visual cue; it was placed approximately at the location in between the eyes of the subsequent face image."
+<!-- All materials - can quote directly from original article - just put the text in quotations and note that this was followed precisely.  Or, quote directly and just point out exceptions to what was described in the original article. -->
+ 
+    "A small black fixation cross (0.5° × 0.5°) was presented in the center of the screen throughout the experiment. Two small horizontal lines (~0.5° long) were presented to the left and right of fixation and served as landmarks for the horizontal midline of thescreen. The target display consisted of two faces (each 8° × 6°) that were presented to the left and right of fixation at an eccentricity of 6°. The face images were chosen from 20 images of female Caucasian faces (approximate age range from 20 to 30 years) taken from Bronstad and Russell’s (2007) database. They were converted to gray scale and cropped such that only their inner features (no hair or neck) were visible. All the faces were matched in overall brightness (104 cd/m2), but the contrast of the eye region was systematically manipulated for each face. Specifically, a mask (handdefined in Adobe Photoshop) covering the eyes and the eyebrows was created for each face, and the contrast within that mask was manipulated by parametrically changing the standard deviation of that section of the image using MATLAB (The MathWorks, Natick, MA). This decreased or increased the luminance differences around the eye region in the face. For each face, five different contrast levels were created. These levels were measured in terms of root-mean-square error (RMSE) of the pixels’ luminance values within the masked region. Contrast levels of 0.30, 0.35, 0.39, 0.44, and 0.50 RMSE were used."
+
+The experimental materials used in the original study (i.e., contrast manipulated face images) were provided by the original authors. Although we used the same stimuli, the size, brightness and spacing of stimuli could not be precisely controlled due to several constraints in the experimental settings as our experiment was conducted online on the Amazon Mechanical Turk (e.g., different displays, web browing environments, etc). However, we tried to keep the relative sizes and positions of stimuli as close to those in the original study as possible. 
 
 ###Procedure
-"The experiment was conducted in a dimly lit room, and the stimuli were presented on a 15-in. CRT display (1,280 × 1,024 pixels; 85 Hz) whose background color was set to gray (111 cd/m2). Participants viewed the stimuli at a distance of 57 cm, and a chin rest was used to stabilize their heads. Participants’ gaze was tracked with an eye tracker (EyeLink 1000, SR Research Ltd.) to ensure fixation. The experiment was run in MATLAB using the Psychophysics Toolbox (Brainard, 1997; Pelli, 1997). Participants were instructed to maintain their gaze on the fixation cross in the center of the gray screen throughout each experimental block. When they moved their gaze more than 1.5° away from fixation, the trial was aborted. At the beginning of each trial, a black circle appeared briefly (~70 ms) on either the left or the right side of the screen. After another 58 ms, face images were presented simultaneously on the left and right for 58 ms (Fig. 1a). Thus, the stimulus onset asynchrony (SOA) between the attentional cue and the faces was 128 ms. After the offset of the faces, the gray screen with the fixation cross was presented until the participant responded. The  intertrial interval varied from 1.0 to 1.5 s. On two thirds of the trials, two different faces were randomly selected from the set of 20 faces to be presented as the target display. One of the faces was presented at the standard contrast (Level 3), and the other face was presented at one of the test contrasts (Levels 1–5). On the other third of the trials, the exact same face was presented on the left and right at the standard contrast. These trials were included so that we could compare responses to cued and uncued faces while all physical attributes of the two faces were matched. The analyses of the effects of the attentional cue on attractiveness judgments focused on these matched-face trials."
+<!-- Can quote directly from original article - just put the text in quotations and note that this was followed precisely.  Or, quote directly and just point out exceptions to what was described in the original article. -->
 
-"Experiment 3 followed the same procedure as Experiment 1 except for the task instructions. Participants were asked to report the vertical positioning (upward or downward) of the face that appeared to have higher contrast around the eye region by pressing the up- or down-arrow key on a keyboard. Prior to the experiment, participants were shown three example stimuli and were told that contrast varied around the eye region. As in the other experiments, participants were told that the black dot (the attentional cue) was task irrelevant."
+    "The experiment was conducted in a dimly lit room, and the stimuli were presented on a 15-in. CRT display (1,280 × 1,024 pixels; 85 Hz) whose background color was set to gray (111 cd/m2). Participants viewed the stimuli at a distance of 57 cm, and a chin rest was used to stabilize their heads. Participants’ gaze was tracked with an eye tracker (EyeLink 1000, SR Research Ltd.) to ensure fixation. The experiment was run in MATLAB using the Psychophysics Toolbox (Brainard, 1997; Pelli, 1997). Participants were instructed to maintain their gaze on the fixation cross in the center of the gray screen throughout each experimental block. When they moved their gaze more than 1.5° away from fixation, the trial was aborted. At the beginning of each trial, a black circle appeared briefly (~70 ms) on either the left or the right side of the screen. After another 58 ms, face images were presented simultaneously on the left and right for 58 ms (Fig. 1a). Thus, the stimulus onset asynchrony (SOA) between the attentional cue and the faces was 128 ms. After the offset of the faces, the gray screen with the fixation cross was presented until the participant responded. The  intertrial interval varied from 1.0 to 1.5 s. On two thirds of the trials, two different faces were randomly selected from the set of 20 faces to be presented as the target display. One of the faces was presented at the standard contrast (Level 3), and the other face was presented at one of the test contrasts (Levels 1–5). On the other third of the trials, the exact same face was presented on the left and right at the standard contrast. These trials were included so that we could compare responses to cued and uncued faces while all physical attributes of the two faces were matched. The analyses of the effects of the attentional cue on attractiveness judgments focused on these matched-face trials."  
+
+    "Experiment 3 followed the same procedure as Experiment 1 except for the task instructions. Participants were asked to report the vertical positioning (upward or downward) of the face that appeared to have higher contrast around the eye region by pressing the up- or down-arrow key on a keyboard. Prior to the experiment, participants were shown three example stimuli and were told that contrast varied around the eye region. As in the other experiments, participants were told that the black dot (the attentional cue) was task irrelevant." 
+
+The experimental procedures were followed precisely, except for the following changes:
+
+* The presentation of stimuli was controlled by Java.
+* As mentioned before, we did not have control over the size, resolution and refresh rate of displays. Also, the testing environments were considerably different from the original study -- Turkers' presumably worked from their home viewing the screen at a random distance without a chin rest and without an eye tracker recording their gaze positions.
+* There were also a few differences in the duration of stimulus presentation. Considering that the most common refresh rates for computer screens include 30Hz and 60Hz, we fixed the lengths of cue and face presentation at 66 ms instead of 70 ms and 58 ms, respectively. Thus, the stimulus onset asynchrony (SOA) between the attentional cue and the faces in our version of the experiment was 132 ms which was 4 ms longer than in the original study. However, we did not expect that difference to be effective enough to abolish the attentional cueing effect.
+
 
 ###Analysis Plan
->There was a main effect of actual contrast level on contrast judgments,
->F(4, 15) = 27.93, p = .0001, η2 = .31. Participants chose the face with 
->higher contrast around the eye region more often than the face with
->lower contrast around the eye region. As in the previous experiments, 
->our main analysis focused on the matched-face trials, in which identical 
->faces were presented at Contrast Level 3. As shown in Figure 4b, 
->when the two faces were physically identical, participants tended to
->judge the face at the cued location to have higher contrast than the face
->at the uncued location (55.8% vs.45.8%), t(15) = 2.51, p = .02, η2 = .30.
+>There was a main effect of actual contrast level on contrast judgments, $F$(4, 15) = 27.93, $p$= .0001, $\eta^2$ = .31. Participants chose the face with higher contrast around the eye region more often than the face with lower contrast around the eye region. As in the previous experiments, our main analysis focused on the matched-face trials, in which identical faces were presented at Contrast Level 3. As shown in Figure 4b, when the two faces were physically identical, participants tended to judge the face at the cued location to have higher contrast than the face at the uncued location (55.8% vs.45.8%), $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30.
 
-Can also quote directly, though it is less often spelled out effectively for an analysis strategy section.  The key is to report an analysis strategy that is as close to the original - data cleaning rules, data exclusion rules, covariates, etc. - as possible.  
+<!--Can also quote directly, though it is less often spelled out effectively for an analysis strategy section.  The key is to report an analysis strategy that is as close to the original - data cleaning rules, data exclusion rules, covariates, etc. - as possible. --> 
 
-**Clarify key analysis of interest here**  You can also pre-specify additional analyses you plan to do.
+<!--**Clarify key analysis of interest here**  You can also pre-specify additional analyses you plan to do.-->
+
+#### Key Analysis of Interest
 
 1. We will conduct a repeated measures analysis of variance (ANOVA) to test for the overall effect of contrast regardless of attentional manipulation. This will test the effect of physical contrast on contrast judgments (i.e., the number of times a face is chosen as having higher contrast).
 
@@ -58,50 +73,57 @@ Can also quote directly, though it is less often spelled out effectively for an 
 3. We will conduct a paired sample t-test to examine whether the attented face is judged to have higher contrast than the unattended face is when the physical contrast of the two faces is identical.
 
 ###Differences from Original Study
-The original study was conducted in a highly controlled experimental setting typical for psychophysics experiments. There will be several differences from the original study. We will have less control over the display (e.g., size, luminance, resolution, refresh rate etc.), timing of stimulus presentation, environment (e.g., darkened psychophysics room vs. cafe) and so on.
+The original study was conducted in a highly controlled experimental setting typical for psychophysics experiments. There will be several differences from the original study. We will have less control over the display (e.g., size, luminance, resolution, refresh rate etc.), timing of stimulus presentation, testing environment and so on.
 
 - Contrast & luminance: Because contrast levels are a critical manipulation in this study ............
 - Screen dimension & stimulus size: There is a possibility that the size of stimuli or the distance to targets from the fixation point might affect experimental results. .....................
 
-Explicitly describe known differences in sample, setting, procedure, and analysis plan from original study.  The goal, of course, is to minimize those differences, but differences will inevitably occur.  Also, note whether such differences are anticipated to make a difference based on claims in the original article or subsequent published research on the conditions for obtaining the effect.
+<!--Explicitly describe known differences in sample, setting, procedure, and analysis plan from original study.  The goal, of course, is to minimize those differences, but differences will inevitably occur.  Also, note whether such differences are anticipated to make a difference based on claims in the original article or subsequent published research on the conditions for obtaining the effect.-->
 
-### Methods Addendum (Post Data Collection)
+<!--### Methods Addendum (Post Data Collection)
 
-You can comment this section out prior to final report with data collection.
+You can comment this section out prior to final report with data collection.-->
 
 #### Actual Sample
-  Sample size, demographics, data exclusions based on rules spelled out in analysis plan
+<!-- Sample size, demographics, data exclusions based on rules spelled out in analysis plan -->
 
 #### Differences from pre-data collection methods plan
-  Any differences from what was described as the original plan, or “none”.
+<!--  Any differences from what was described as the original plan, or “none”. -->
 
+
+***
 
 ##Results
 
 
 ### Data preparation
 
-Data preparation following the analysis plan.
+<!--Data preparation following the analysis plan.-->
 	
-```{r include=F}
-###Data Preparation
+```{r echo=F, include=F}
 rm(list=ls())
+####Load Relevant Libraries and Functions
+library(tidyverse)
+library(jsonlite)
+library(purrr)
+# library(quickpsy)
+# library(boot)
+library(lsr)
+library(ez)
+library(gridExtra)
+library(lme4)
+```
+
+```{r error=FALSE, warning=FALSE}
+###Data Preparation
 path <- "~/class/StanfordPsych254/stormer/"
 files <- dir(paste0(path,"mturk/sandbox-results/"), 
              pattern = "*.json")
 d.raw <- data.frame()
 
-####Load Relevant Libraries and Functions
-library(tidyverse)
-library(jsonlite)
-# library(quickpsy)
-# library(boot)
-library(lsr)
-library(ez)
 ####Import data
 for (f in files) {
   jf <- paste0(path, "mturk/sandbox-results/",f)
-  # jd <- fromJSON(paste(readLines(jf), collapse=""))
   jd <- jsonlite::fromJSON(paste(readLines(jf)), flatten=TRUE)
   stimCond <- jd$answers$data$stimCond
   resp <- jd$answers$data$data
@@ -112,45 +134,55 @@ for (f in files) {
 }
 # Number of participants
 length(unique(d.raw$workerid))
-#### Data exclusion / filtering
+```
+<!---#### Data exclusion / filtering
+#  TBD --->
 
 #### Prepare data for analysis - create columns etc.
+```{r}
+# as factor
 d.raw[sapply(d.raw, is.character)] <- lapply(d.raw[sapply(d.raw, is.character)], as.factor)
 d.raw$face <- factor(d.raw$face)
 d.raw$testContrast <- factor(d.raw$testContrast)
 
-head(d.raw)
-
+# retrieve the face chosen and the vertical position of target face in each trial
 d<-d.raw %>%
-  mutate(testVertical = factor(ifelse((testPos=="left"&leftUp==T)|(testPos=="right"&leftUp==F),"up",
-                               ifelse((testPos=="left"&leftUp==F)|(testPos=="right"&leftUp==T),"down",NA)))) %>%
+  mutate(testVertical = factor(ifelse((testPos=="left"&leftUp==T)|(testPos=="right"&leftUp==F),"up",                           ifelse((testPos=="left"&leftUp==F)|(testPos=="right"&leftUp==T),"down",NA)))) %>%
   mutate(chosen = factor(ifelse(testVertical==keypress,"test","standard")))
 
+head(d)
+
+# calculate the % of trials where participants answered that "test" face had higher contrast than "standard" face
 tbl <- d %>% 
   group_by(workerid,cue,testContrast) %>%
   summarise(n=n(),testChosen=sum(chosen=="test"), 
             standardChosen=sum(chosen=="standard"),pctTest=testChosen/n*100) 
 
+# prep data for plotting
 tbl <- tbl %>%
   group_by(workerid) %>%
-  mutate(workerMean=mean(pctTest)) %>%
+  mutate(workerMean=mean(pctTest)) %>% # worker means across conditions
   ungroup() %>%
-  mutate(grandMean=mean(workerMean)) %>%
-  # To calculate within subject errors
+  mutate(grandMean=mean(workerMean)) %>% # grand mean across subjects
+  # To compute within subject errors later
  # new value = old value – subject average + grand average
   mutate(newPct=pctTest-workerMean+grandMean)
-
 ```
 
 ### Confirmatory analysis
+#### Manipulation check: ANOVA
+```{r warning=FALSE}
+anova1 <- ezANOVA(data=tbl, dv=pctTest, wid=workerid,within=testContrast,within_full=cue,detailed=TRUE)
+print(anova1$ANOVA)
+```
 
-The analyses as specified in the analysis plan.  
+<!-- *Side-by-side graph with original graph is ideal here* -->
+#### Figure 4a. Psychometric functions
 
-*Side-by-side graph with original graph is ideal here*
+![Figure 4a from Stormer & Alvarez](../writeup/figures/figure4a.png)
+"The psychometric functions (a) show the percentage of all trials in which participants chose the test face as having higher contrast than the standard face as a function of the test face’s contrast. Error bars represent ±1 SEM (within subjects). *p<.05."
 
-### Figure 4a. Psychometric functions
-![Figure 4a from Stormer&Alvarez](../writeup/figures/figure4a.png)
-The psychometric functions (a) show the percentage of all trials in which participants chose the test face as having higher contrast than the standard face as a function of the test face’s contrast. Error bars represent ±1 SEM (within subjects). *p<.05.
+
 ```{r}
 # get mean psychometric
 psychometric <- tbl %>% 
@@ -168,7 +200,8 @@ psychometric <- psychometric %>%
 #   # geom_pointrange(aes(ymin=avePct-se, ymax=avePct+se))
 
 ```
-#### fit psychometric functions using MLE
+
+#### Psychometric curve fit using MLE
 ```{r}
 RMScontrast = c(.30,.35,.39,.44,.50)
 x<-RMScontrast
@@ -189,7 +222,11 @@ yseq <- pweibull(xseq, para[1], para[2])
 data.frame(xseq,yseq) 
 }
 # plot
-curves <- plyr::ddply(dat, ~cue, fitting)
+npoints <- 201
+curves <- dat %>%
+  split(.$cue) %>%
+  map_df(fitting)
+curves$cue <-rbind(matrix(rep("standard",npoints)), matrix(rep("test",npoints)))
 
 p<- psychometric %>%
   ggplot(aes(x=RMScontrast,y=avePct,group=cue,color=cue)) +
@@ -208,9 +245,11 @@ p<- psychometric %>%
 p
 ```
 
-###Figure 4b. 
-![Figure 4b from Stormer&Alvarez](../writeup/figures/figure4b.png)
-The bar graph (b) shows the percentage of matched-face trials (Contrast Level 3) in which the test face was judged to have higher contrast than the standard face in each of the cue conditions. Error bars represent ±1 SEM (within subjects). *p<.05.
+####Figure 4b. 
+
+![Figure 4b from Stormer & Alvarez](../writeup/figures/figure4b.png)
+"The bar graph (b) shows the percentage of matched-face trials (Contrast Level 3) in which the test face was judged to have higher contrast than the standard face in each of the cue conditions. Error bars represent ±1 SEM (within subjects). *p<.05."
+
 ```{r}
 d_t <- tbl[tbl$testContrast=="3",]
 d_t <- d_t %>%
@@ -248,11 +287,62 @@ bar %>%
 # print(dz)
 
 ```
+
 ###Exploratory analyses
-#### ANOVA
-```{r}
-m1<- ezANOVA(data=tbl, dv=pctTest, wid=workerid,within=testContrast,within_full=cue,detailed=TRUE)
+
+####Logistic regression
+Fitting the logit to our binary response data using the generalized linear model (GLM)
+```{r }
+# prep...
+# adding a 0/1 binary response column in the raw dset
+d$choice <- as.numeric(d$chosen) - 1
+d$rms <-d$testContrast
+levels(d$rms) <- RMScontrast
+d$rms <- as.numeric(as.character(d$rms))
+
+# defining a function to perform logistic regression for individual data
+logFit <- function(d,tbl) {
+logreg <- glm(formula = choice ~ cue * rms -1, family = "binomial",d)
+
+y_t <- predict(logreg,data.frame(cue="test",rms=xseq),type = "response")
+y_s <- predict(logreg,data.frame(cue="standard",rms=xseq),type = "response")
+yset <- data.frame(rbind(matrix(y_s),matrix(y_t)))
+colnames(yset) = "yseq"
+yset$cue <-rbind(matrix(rep("standard",npoints)), matrix(rep("test",npoints)))
+yset$xseq = xseq
+
+logplot <- d %>%ggplot( aes(x=rms,y=choice)) +
+  geom_point(aes(x=rms, y=choice, color=cue),shape=21, fill=NA,alpha=0.7, 
+             position=position_jitter(width =.006,height = .04)) +
+  geom_line(data=yset,aes(x=xseq,y=yseq,color=cue)) +
+  ggthemes::theme_few() +
+  geom_point(data=tbl,aes(x=rms, y=pctTest/100, color=cue))
+logplot
+}
+
 ```
+
+```{r}
+# for loop to 
+plots <- list()
+for (i in 1:4) {
+  plots[[i]] <- logFit(d[d$workerNo==i,], t[tbl$workerNo==i,])
+}
+do.call(grid.arrange,plots)
+
+
+```
+
+####Mixed effects logistic regression
+```{r}
+# model comparisons?
+mixedLog1 <- glmer(choice ~ cue * rms + (1|workerid), family = "binomial", d)
+mixedLog2 <- glmer(choice ~ cue * rms + (1|workerid), family = "binomial", d)
+anova(mixedLog1,mixedLog2)
+
+```
+
+
 Any follow-up analyses desired (not required).  
 ```{r}
 #examine individual difference

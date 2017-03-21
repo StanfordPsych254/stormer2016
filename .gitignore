@@ -35,11 +35,10 @@ vignettes/*.pdf
 
 # Image/output files unless otherwise specified
 *.pdf
-*.png
+
 *.docx
 *.doc
-*.jpg
-*.gif
+
 
 # Misc Knit Files
 *.aux

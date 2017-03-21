@@ -183,6 +183,7 @@ function submitInfo() {
     allData.age = $('#age').val();
     allData.gender = $('input[name="gender"]:checked').val();
     allData.feedback = $("#feedback").val();
+    allData.comments = $("#feedback2").val();
 
     submitData();
 }
@@ -482,7 +483,7 @@ var practice = {
   // response
   resp: function() {
 
-    if (practice.nTrial < 16) {
+    if (practice.nTrial < 17) {
         $("#instText").text("Up or Down?");
       } else {
         faceDur = 66;
@@ -576,20 +577,6 @@ var practice = {
     } else {
       showSlide("full-exit");
     };
-    // if (!dead) {
-    //   if (practice.trial > 0) {
-    //     if (curTrial > 2 && opener.turk.previewMode) {
-    //       experiment.end();
-    //     } else {
-    //       trial.pushData(false);
-    //       showSlide("trial-start");
-    //     }
-    //   } else{
-    //     showSlide("trial-start");
-    //   }
-    // } else {
-    //   showSlide("full-exit");
-    // }
 
   },
 

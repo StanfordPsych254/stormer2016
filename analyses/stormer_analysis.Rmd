@@ -15,6 +15,8 @@ library(jsonlite)
 # library(boot)
 library(lsr)
 library(ez)
+
+library(psyphy)
 ```
 
 # Data prep
@@ -160,7 +162,7 @@ t$testChosen[11:20] = t$pctTest[11:20]/100*40
 psychometric <- t %>% 
   group_by(cue,testContrast) %>%
   # mean and within subject errors
-  dplyr::summarise(avePct=mean(pctTest), se=sd(newPct)/sqrt(n()),
+  summarise(avePct=mean(pctTest), se=sd(newPct)/sqrt(n()),
             ntrial=mean(n),aveTestChosen=mean(testChosen),
             sumTest=sum(testChosen),sumN=sum(n))
 psychometric <- psychometric %>%
@@ -185,9 +187,7 @@ y <- k/n
 cue <- psychometric$cue
 dat <- data.frame(cue,x, k,n, y)
 
-# p<-ggplot()+
-#   geom_point(data=dat,aes(x=x,y=y,color=cue))
-# p
+
 
 # m<-2 # 2-alternative forced choice
 
@@ -229,6 +229,87 @@ p
 # fit<-quickpsy(dat,x,k,n,grouping=.(cue),lapses=TRUE,guess=TRUE,fun=weibull_fun,bootstrap = "none")
 
 ```
+```{r}
+# fit with glm
+
+ddd<-data.frame(RMScontrast,dat$k[1:5],80-dat$k[1:5],dat$y[1:5])
+colnames(ddd)<-c("RMScontrast","k","i","y")
+p1<-ggplot()+
+  geom_point(data=ddd,aes(x=x,y=y,color=cue))
+p1
+model <- glm(cbind(ddd$k,ddd$i) ~ RMScontrast, family=binomial(link=cloglog))
+
+yseq <- predict(model,data.frame(RMScontrast=xseq),type = "response")
+cur <- data.frame(xseq,yseq)
+p1 <- p1 + geom_line(data = cur, aes(x = xseq, y = yseq))
+p1
+
+glmFit <- function(df) {
+  model <- glm(cbind(df$k,df$i) ~ RMScontrast, family=binomial(link=cloglog))
+  
+  
+}
+
+
+n<-c(100,100,100,100,100)
+k<-c(38,44,57,63,72)
+i <-100-k
+ddd<-data.frame(RMScontrast,k,i,n,y)
+
+p1<-ggplot()+
+  geom_point(data=ddd,aes(x=RMScontrast,y=y))
+p1
+model <- glm(cbind(ddd$k,ddd$i) ~ RMScontrast, family=binomial(link=logit))
+
+yseq <- predict(model,data.frame(RMScontrast=xseq),type = "response")
+cur <- data.frame(xseq,yseq)
+p1 <- p1 + geom_line(data = cur, aes(x = xseq, y = yseq))
+p1
+
+```
+
+```{r}
+d$rms <-d$testContrast
+levels(d$rms) <- RMScontrast
+d$rms <- as.numeric(as.character(d$rms))
+
+d$choice <- as.numeric(d$chosen) - 1
+
+d %>% ggplot(aes(x=rms,y=choice,color=cue)) +
+  geom_point(shape=21, fill=NA,alpha=0.7, 
+             position=position_jitter(width =.006,height = .04)) +
+  ggthemes::theme_few()
+
+logreg <- glm(formula = choice ~ cue * rms -1, family = "binomial",d)
+
+y_t <- predict(logreg,data.frame(cue="test",rms=xseq),type = "response")
+y_s <- predict(logreg,data.frame(cue="standard",rms=xseq),type = "response")
+yset <- data.frame(rbind(matrix(y_s),matrix(y_t)))
+colnames(yset) = "yseq"
+yset$cue <-rbind(matrix(rep("standard",npoints)), matrix(rep("test",npoints)))
+yset$xseq = xseq
+
+d %>%ggplot( aes(x=rms,y=choice)) +
+  geom_point(aes(x=rms, y=choice, color=cue),shape=21, fill=NA,alpha=0.7, 
+             position=position_jitter(width =.006,height = .04)) +
+  geom_line(data=yset,aes(x=xseq,y=yseq,color=cue)) +
+  ggthemes::theme_few() +
+  geom_point(data=tbl,aes(x=rms, y=pctTest/100, color=cue))
+
+
+
+# 
+#   xlab("Contrast Level of Test Face (RMSE)") +
+#   ylab("Test Face Chosen (%)") +
+#   theme(legend.position = c(0,1), legend.justification = c(0,1),
+#         legend.background= element_rect(fill=NA, color=NA),
+#         legend.title = element_blank()) +
+#   scale_color_discrete(labels=c("Standard Face Cued","Test Face Cued"),
+#                        guide=guide_legend(reverse=TRUE))
+```
+
+
+
 
 ```{r}
 # test the effect of contrast level on contrast judgments

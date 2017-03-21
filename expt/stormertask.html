@@ -32,8 +32,8 @@
 				In the example below, the image on the right has <strong>higher</strong> contrast than the image on the left. <br>
 				<center><img src="images/contrastExample.jpg" width="480" align="middle" alt="contrastExample"></center>
 			</p>
-			<p>
-			 Look at the eyes and brows of the two faces below. Do they have the same or different contrast around the eye region?
+			<p style="text-align: center">
+			 Same or different contrast?
 			 <center><img src="images/FaceStim/img1_contrast3.png" style="width:140">  &nbsp;&nbsp;&nbsp; <img src="images/FaceStim/img1_contrast2.png" style="width:140"> </center>
 			 </p>
 				<input type="radio" name="devices" value="on" onclick="showHiddenDisable('contrastCheck')">SAME<br>
@@ -125,7 +125,7 @@
 
 		<div class="zen-slide" id="instructions5" style="font-size:0.9em">
 			<p>You will be shown two faces in each trial. Judge which of two faces has higher contrast around the eyes. <br>
-			Report the relative <strong>vertical position</strong> of the chosen face using<br> <span id="arrow-key">UP &#8593;</span> 
+			Report the relative <strong>vertical position</strong> of the face you chose using<br> <span id="arrow-key">UP &#8593;</span> 
 			or <span id="arrow-key">DOWN &#8595;</span> arrow key on your keyboard. <br><br><strong>&#60;Examples&#62;   </strong><span style="font-size:0.65em">(The purple box and text will not be shown in the actual experiment!)</span><br> </p>
 
 			<div class="inst-box" >
@@ -267,8 +267,11 @@
 
 		<div class="slide info" id="demographic">
      		<p><br>Thank you for participating in this study! <br>Please answer the following questions. <br>
-    	    <p>Did you run into any issues? <br>&nbsp;&nbsp;
+    	    <p>Did you run into any issues while doing this experiment? <br>&nbsp;&nbsp;
  			<textarea id="feedback" rows=5 cols=50></textarea></p>
+
+ 			<p>Feel free to leave any other comments or   <br>&nbsp;&nbsp;
+ 			<textarea id="feedback2" rows=5 cols=50></textarea></p>
 
    		 	<p>What is your gender?&nbsp;&nbsp;
     		<input type="radio" name="gender" value="m">Male&nbsp;&nbsp;
