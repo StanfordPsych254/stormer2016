@@ -59,8 +59,10 @@ packrat/src*/
 auth.json
 settings.json
 my-own-auth.json
+mturk-and-gmail.txt
 mturk/
 mturk/auth.json
+mturk/mturk-and-gmail.txt
 mturk/settings.json
 anonymizer/
 production-results/

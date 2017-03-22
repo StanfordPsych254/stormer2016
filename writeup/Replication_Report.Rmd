@@ -343,7 +343,7 @@ print(dz)
 
 ```
 
-We confirmed the original finding that the attended (cued) face was judged to have higher contrast than the same face that was unattended (`r bar$avePct[2]`% vs. `r bar$avePct[1]`%), $t$ = `r ttest$statistic`, $p$ = `r ttest$p.value`, $\eta^2$ = `r coeff$ges[3]`. 
+<!--We confirmed the original finding that the attended (cued) face was judged to have higher contrast than the same face that was unattended--> (`r bar$avePct[2]`% vs. `r bar$avePct[1]`%), $t$ = `r ttest$statistic`, $p$ = `r ttest$p.value`, $\eta^2$ = `r coeff$ges[3]`. 
 
 The original paper reported 55.8% vs. 45.8%, $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30.
 
