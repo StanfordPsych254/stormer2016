@@ -34,7 +34,7 @@
 				<center><img src="images/contrastExample.jpg" width="480" align="middle" alt="contrastExample"></center>
 			</p>
 			<p style="text-align: center">
-			 Same or different contrast?
+			 Look at the faces below. Do they have the same or different contrast?
 			 <center><img src="images/FaceStim/img1_contrast3.png" style="width:140">  &nbsp;&nbsp;&nbsp; <img src="images/FaceStim/img1_contrast2.png" style="width:140"> </center>
 			 </p>
 				<input type="radio" name="devices" value="on" onclick="showHiddenDisable('contrastCheck')">SAME<br>
@@ -125,7 +125,8 @@
 		</div>
 
 		<div class="zen-slide" id="instructions5" style="font-size:0.9em">
-			<p>You will be shown two faces in each trial. Judge which of two faces has higher contrast around the eyes. <br>
+			<p>You will be shown two faces in each trial. Judge which of two faces has higher contrast around the eyes 
+			<span style="color:red"><strong>while looking at the fixation cross</strong></span> in the center.<br>
 			Report the relative <strong>vertical position</strong> of the face you chose using<br> <span id="arrow-key">UP &#8593;</span> 
 			or <span id="arrow-key">DOWN &#8595;</span> arrow key on your keyboard. <br><br><strong>&#60;Examples&#62;   </strong><span style="font-size:0.65em">(The purple box and text will not be shown in the actual experiment!)</span><br> </p>
 
@@ -156,7 +157,7 @@
 		</div>
 
 		<div class="zen-slide" id="instructions6">
-			<p style="margin-top:25px">Let's practice! Please click 'Next' when you are ready.</p>
+			<p style="margin-top:25px"><br><br>Let's practice! Please click 'Next' when you are ready.</p>
 			<button class="zen" type="button" onclick="
 				getTime('instruction6');
 				practice.nextTaskInst()">NEXT</button>
@@ -171,15 +172,21 @@
 				practice.nextTaskInst()">NEXT</button>
 		</div>
 		<div class="zen-slide" id="start-practice">
-			<p></p>
+			<p><br></p>
 			<p><br> Ready to start the practice? </p>
 			<button class="zen" type="button" onclick="
-				practice.run();getTime('start-practice');" style="font-size:0.9em">Yes, I'm ready</button>
+				practice.prerun();getTime('start-practice');" style="font-size:0.9em">Yes, I'm ready</button>
 				<p></p>
 			<button class="zen" type="button" onclick="
 				practice.nextTaskInst()" style="width:auto;font-size:0.9em">No, let me review the instructions</button>
-
 		</div>
+		<div class="zen-slide" id="prerun">
+			<p><br></p>
+			<p> <span style="color:red;font-size:1.2em">Please remember:</span><br><br> You have to stare at the fixation cross throughout the trials. It is very hard not to look at faces when they show up. Please try your best <strong>not to move your gaze away from the cross.</strong></p>
+			<button class="zen" type="button" onclick="
+				practice.run();getTime('prerun');" style="font-size:0.9em">NEXT</button>
+		</div>
+
 		<div class="slide expt" id="trial-start">
 			<div class="centerbox">
 				<button id="start-button" class="zen" type="button" onclick="

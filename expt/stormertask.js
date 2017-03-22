@@ -303,7 +303,8 @@ var practice = {
         "Step 2: Wait for faces to show up while maintaining your gaze on the cross. A black dot will apprear during this time, but just ignore it -- it is irrelevant to the task.",
         "Step 3: Two faces will briefly appear to the left and right of the fixation cross. Judge which face appears to have higher contrast around the eye region while fixating on the cross. "+
         "It is very important that you DO NOT directly look at them. (Note: Faces will be flashed very briefly!!!)",
-        "Step 4: You will have to report the vertical positioning (upward or downward) of the face that appears to have higher contrast. Use the two horizontal lines next to the fixation cross as reference. In the example above, the face on the right has higher contrast and is shifted downward from the horizontal midline.",
+        "Step 4: You will have to report the vertical positioning (upward or downward) of the face that appears to have higher contrast. Use the two horizontal lines next to the fixation cross as reference. "+
+        "In the example above, the face on the right has higher contrast and is shifted downward from the horizontal midline. Again, you shouldn't be looking at the faces but looking at the cross even if faces suddenly appear.",
         "Step 5: Press UP or DOWN arrow key AFTER faces disappear to report the positioning of the face you selected. The next trial will automatically start after you respond."],
 
   end: function() {
@@ -548,7 +549,12 @@ var practice = {
     };
   },
 
-  run: function () {
+  prerun: function() {
+    $z.showSlide("prerun");
+
+  },
+
+  run: function() {
       document.getElementById("return-button").onclick = practice.runFromDead;
         // $("#return-button").attr("onclick",practice.runFromDead);
     document.getElementById("start-button").onclick = practice.nextTrial;
