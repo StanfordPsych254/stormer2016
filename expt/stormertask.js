@@ -109,7 +109,7 @@ function getTime(pageID) {
     };
     lastTime = recordTime; // replace the last time
 
-    allData.push(data);
+    allData.data.push(data);
 };
 
 // checking window size every 30 seconds
@@ -154,7 +154,7 @@ var saveFingerprint =  function() {
     question: "fingerprint",
     answer: fingerprint
   };
-  allData.push(data);
+  allData.data.push(data);
 }
 
 var lastTime = new Date(); // initialize time on load
@@ -236,10 +236,11 @@ var randomize = function(){ // randomize to condition
     exptFaces = [11,12,13,14,15,16,17,18,19,20];
     pracFaces = [1,2,3,4,5,6,7,8,9,10];
   };
-  rand ={
-    whichFaces: x
+  data ={
+    question: "whichFaces",
+    answer: x
   };
-  allData.push(rand);
+  allData.data.push(data);
   factorize();
   nextInstruction();
 };
@@ -271,11 +272,12 @@ var curTrial = 0,
     blockCount = 0;
 var dead = false;
 var rerun = false;
-var allData =[];
+var allData ={};
 // allData.fingerprint = fingerprint;
 allData.practice=[];
 allData.prac2=[];
 allData.experiment=[];
+allData.data=[];
 
 var testContrast = [1,2,3,4,5],
     standardContrast = 3,
