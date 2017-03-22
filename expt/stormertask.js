@@ -335,7 +335,7 @@ var practice = {
     } else {
      $("#instText").text("Ready!");
      showSlide("fixation");
-     console.log(practice.nTrial);
+     // console.log(practice.nTrial);
      if (practice.nTrial>7 ) {
       setTimeout(practice.fixation,readyTime);
      } else {
@@ -401,7 +401,7 @@ var practice = {
     practice.nTrial = practice.nTrial + 1;
     $("#ntrial").text(practice.nTrial);
     $("#instText").text("");
-    console.log(practice.nTrial);
+    // console.log(practice.nTrial);
       thisVerticalShifts = randomElement(allVerticalShifts);
       thisITI = getITI();
       thisTestContrast = randomElement(testContrast);
@@ -513,7 +513,8 @@ var practice = {
         // If a key that we don't care about is pressed, re-attach the handler (see the end of this script for more info)
         $(document).one("keydown", keyPressHandler);
         
-      } else {
+      } else { 
+        // console.log(keyCode)
         // If a valid key is pressed (code 80 is p, 81 is q),
         // record the reaction time (current time minus start time), which key was pressed, and what that means (even or odd).
 
@@ -719,7 +720,7 @@ var experiment = {
     curTrial++
     $("#ntrial").text(curTrial);
     $("#instText").text("");
-    console.log(curTrial);
+    // console.log(curTrial);
       thisVerticalShifts = randomElement(allVerticalShifts);
       thisITI = getITI();
       var thisCond = experiment.trialSeq.shift();

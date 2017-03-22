@@ -55,7 +55,8 @@ The experimental procedures were followed precisely, except for the following ch
 * The presentation of stimuli was controlled by Java.
 * As mentioned before, we did not have control over the size, resolution and refresh rate of displays. Also, the testing environments were considerably different from the original study -- Turkers' presumably worked from their home viewing the screen at a random distance without a chin rest and without an eye tracker recording their gaze positions.
 * There were also a few differences in the duration of stimulus presentation. Considering that the most common refresh rates for computer screens include 30Hz and 60Hz, we fixed the lengths of cue and face presentation at 66 ms instead of 70 ms and 58 ms, respectively. Thus, the stimulus onset asynchrony (SOA) between the attentional cue and the faces in our version of the experiment was 132 ms which was 4 ms longer than in the original study. However, we did not expect that difference to be effective enough to abolish the attentional cueing effect.
-
+* To reduce the length of the experiment 10 instead of 20 faces were used for each participant. We splitted the faces into two sets and randomly assigned which set would be used for each participant. The remaining 10 faces appeared in practice trials.
+* Participants practiced the task at lower speed in some portion of practice trials.
 
 ###Analysis Plan
 >There was a main effect of actual contrast level on contrast judgments, $F$(4, 15) = 27.93, $p$= .0001, $\eta^2$ = .31. Participants chose the face with higher contrast around the eye region more often than the face with lower contrast around the eye region. As in the previous experiments, our main analysis focused on the matched-face trials, in which identical faces were presented at Contrast Level 3. As shown in Figure 4b, when the two faces were physically identical, participants tended to judge the face at the cued location to have higher contrast than the face at the uncued location (55.8% vs.45.8%), $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30.
@@ -65,19 +66,33 @@ The experimental procedures were followed precisely, except for the following ch
 <!--**Clarify key analysis of interest here**  You can also pre-specify additional analyses you plan to do.-->
 
 #### Key Analysis of Interest
+The __dependent variable__ (DV) of interest in Experiment 3 of the original study was __the _percentage_ of trials where participants judged the *"test" face* as having higher contrast than the *"standard" face*__ (contrast fixed at Level 3). Specifically, they focused their analysis on the _"matched-face"_ trials in which the actual contrast of _test_ and _standard_ faces was _identical_ (i.e., both Level 3 and of the same identity). That is, they compared participants' responses from the matched-face trials in the test-cued and the standard-cued conditions to scrutinize __the effect of attentional cue__ (IV) on the contrast judgment, controlling for physical difference. 
 
-1. We will conduct a repeated measures analysis of variance (ANOVA) to test for the overall effect of contrast regardless of attentional manipulation. This will test the effect of physical contrast on contrast judgments (i.e., the number of times a face is chosen as having higher contrast).
+The original authors conducted a _paired-samples t_ test to examine the effect of attention _within_ participants and found that attention had a significant effect on participants' responses (55.8% vs.
+45.8%), $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30 (*d~z~* = `r d_z`).
 
-2. We will fit data (% choice) to a cumulative Weibull function using the maximum likelihood estimation (MLE), for "test face cued" and for "standard face cued" condition separately.
+__The key analysis of interest__ in this replication is, therefore, a _paired-sample t_ test to determine whether or not the mean % choices in the two attentional cueing conditions are equal.  
+  
+  
+As subsidary analyses, we are going to replicate:
 
-3. We will conduct a paired sample t-test to examine whether the attented face is judged to have higher contrast than the unattended face is when the physical contrast of the two faces is identical.
+* The two-way repeated measures ANOVA to test the main effects and interaction of contrast level and the cue condition.
+
+* Figure 2a showing participants' choices as a function of contrast of the test face, for test face cued and for standard face cued conditions separately.  
+  
+  
+Finally, we will perform the following additional analyses:
+
+* Mixed-effects logistic regression to model binary responses (test vs. standard)
+
+* Logistic (logit) regression to model individual participants' responses
 
 ###Differences from Original Study
-The original study was conducted in a highly controlled experimental setting typical for psychophysics experiments. There will be several differences from the original study. We will have less control over the display (e.g., size, luminance, resolution, refresh rate etc.), timing of stimulus presentation, testing environment and so on.
+The original study was conducted in a highly controlled experimental setting typical for psychophysics experiments, whereas our study will be conducted online. We will have less control over the display (e.g., size, luminance, resolution, refresh rate etc.), timing of stimulus presentation, testing environment and so on.
 
-- Contrast & luminance: Because contrast levels are a critical manipulation in this study ............
-- Screen dimension & stimulus size: There is a possibility that the size of stimuli or the distance to targets from the fixation point might affect experimental results. .....................
-
+- Contrast & luminance: Although we will not be able to control the absolute contrast/luminance shown to participants, we expect relative differences between images will be maintained. In addition, we might be able to infer whether different contrasts distinguishable on participants' screen by looking at the effect of contrast on each participant's reponses.
+- Screen dimension & stimulus size: There is a possibility that the size of stimuli or the distance to targets from the fixation point might affect experimental results. It has been well documented that visual task performance is modulated by eccentricity, and it also has been reported that the effect of exogenous attention depends on the size of the cue. However, while it is possible that such factors can make participants' performance vary, we expect that the variance could be explained by a subject factor.
+- We did not include difference face trials which composed 2/3 of the trials. Because only the same face trials were included in the analysis in the original study, we reasoned that this decision would not cause a significant difference in results.
 <!--Explicitly describe known differences in sample, setting, procedure, and analysis plan from original study.  The goal, of course, is to minimize those differences, but differences will inevitably occur.  Also, note whether such differences are anticipated to make a difference based on claims in the original article or subsequent published research on the conditions for obtaining the effect.-->
 
 <!--### Methods Addendum (Post Data Collection)
@@ -112,7 +127,11 @@ library(lsr)
 library(ez)
 library(gridExtra)
 library(lme4)
+library(sjPlot)
+# library(sjmisc)
 theme_set(ggthemes::theme_few())
+options(digits=2,nsmall=2)
+
 ```
 
 ```{r error=FALSE, warning=FALSE}
@@ -137,7 +156,9 @@ for (f in files) {
                      keypress=na.omit(expt$keypress),
                      ITI=na.omit(expt$ITI))
   id <- data.frame(workerid = jd$WorkerId)
-  id <- cbind(id,stimcond)
+  whichFaceSet <- data.frame(whichSet = 
+                              as.integer(jd$answers$data$data$answer[4]))
+  id <- cbind(id,stimcond,whichFaceSet)
 
   d.raw <- bind_rows(d.raw, id)
 }
@@ -153,6 +174,7 @@ numWorkers = length(unique(d.raw$workerid))
 d.raw[sapply(d.raw, is.character)] <- lapply(d.raw[sapply(d.raw, is.character)], as.factor)
 d.raw$face <- factor(d.raw$face)
 d.raw$testContrast <- factor(d.raw$testContrast)
+d.raw$whichSet <- factor(d.raw$whichSet)
 
 # retrieve the face chosen and the vertical position of target face in each trial
 d<-d.raw %>%
@@ -165,7 +187,9 @@ head(d)
 tbl <- d %>% 
   group_by(workerid,cue,testContrast) %>%
   summarise(n=n(),testChosen=sum(chosen=="test"), 
-            standardChosen=sum(chosen=="standard"),pctTest=testChosen/n*100) 
+            standardChosen=sum(chosen=="standard"),
+            pctTest=testChosen/n*100,
+            whichFace=unique(whichSet))
 
 # prep data for plotting
 tbl <- tbl %>%
@@ -179,21 +203,36 @@ tbl <- tbl %>%
 ```
 
 ### Confirmatory analysis
-#### Manipulation check: ANOVA
+#### ANOVA: manipulation checks
 ```{r warning=FALSE}
-anova1 <- ezANOVA(data=tbl, dv=pctTest, wid=workerid,within=testContrast,within_full=cue,detailed=TRUE)
-print(anova1)
+aov_rep <- ezANOVA(data=tbl, dv=pctTest, wid=workerid,within=.(testContrast,cue),detailed=TRUE)
+print(aov_rep)
+
+coeff <- aov_rep$ANOVA
+coeff <- format(coeff,digits=2,nsmall=2)
+coeff$p <- format(coeff$p, scientific=FALSE)
+coeff$DFd <- as.integer(coeff$DFd)
+coeff$DFn <- as.integer(coeff$DFn)
+
 ```
 
-<!-- *Side-by-side graph with original graph is ideal here* -->
-#### Figure 4a. Psychometric functions
+Our repeated-measures analysis of variance (ANOVA) revealed a main effect of physical contrast on contrast judgments, $F$(`r coeff$DFn[2]`, `r coeff$DFd[2]`) = `r coeff$F[2]`, $p$ = `r coeff$p[2]`, $\eta^2$ = `r coeff$ges[2]`. There was no main effect of cue condition, $p$ = `r coeff$p[3]`. <!--However, there was interaction between cue condition and contrast level, $F$(`r coeff$DFn[4]`, `r coeff$DFd[4]`) = `r coeff$F[4]`, $p$ = `r coeff$p[4]`, $\eta^2$ = `r coeff$ges[4]`. -->
+Interaction: $F$(`r coeff$DFn[4]`, `r coeff$DFd[4]`) = `r coeff$F[4]`, $p$ = `r coeff$p[4]`, $\eta^2$ = `r coeff$ges[4]`
 
-![Figure 4a from Stormer & Alvarez](../writeup/figures/figure4a.png)
+The original authors only reported the main effect of contrast level in Experiment 3, $F$(4, 15) = 27.93, $p$ = .0001, $\eta^2$ = .31.
+
+
+<!-- *Side-by-side graph with original graph is ideal here* -->
+#### Replication of Figure 4a. Psychometric functions
+
+<!-- ![Figure 4a from Stormer & Alvarez](../writeup/figures/figure4a.png) -->
+<img src="../writeup/figures/figure4a.png" alt="Drawing" style="width: 500px;" />
+
 "The psychometric functions (a) show the percentage of all trials in which participants chose the test face as having higher contrast than the standard face as a function of the test face’s contrast. Error bars represent ±1 SEM (within subjects). *p<.05."
 
 
 ```{r}
-# get mean psychometric
+# get mean psychometric data points across subjects
 psychometric <- tbl %>% 
   group_by(cue,testContrast) %>%
   # mean and within subject errors
@@ -202,15 +241,16 @@ psychometric <- tbl %>%
             sumTest=sum(testChosen),sumN=sum(n))
 psychometric <- psychometric %>%
   mutate(RMScontrast = c(.30,.35,.39,.44,.50))
-# psychometric %>%
-#   ggplot(aes(x=RMScontrast,y=avePct,group=cue,color=cue)) +
-#   geom_point(size=3) +
-#   ggthemes::theme_few()
-#   # geom_pointrange(aes(ymin=avePct-se, ymax=avePct+se))
 
 ```
 
-#### Psychometric curve fit using MLE
+<!-- # psychometric %>%
+#   ggplot(aes(x=RMScontrast,y=avePct,group=cue,color=cue)) +
+#   geom_point(size=3) +
+#   ggthemes::theme_few()
+#   # geom_pointrange(aes(ymin=avePct-se, ymax=avePct+se)) -->
+
+#### Psychometric curve fit (weibull) using MLE
 ```{r}
 RMScontrast = c(.30,.35,.39,.44,.50)
 x<-RMScontrast
@@ -219,7 +259,7 @@ k <- psychometric$sumTest # number of times that the observer reports that can s
 y <- k/n
 cue <- psychometric$cue
 dat <- data.frame(cue,x, k,n, y)
-# define function for fitting binomial (MLE)
+# define function
 fitting <- function(df){
   nll <- function(p) { 
   phi <- pweibull(df$x, p[1], p[2]) 
@@ -230,13 +270,15 @@ xseq <- seq(.3,.5,.001)
 yseq <- pweibull(xseq, para[1], para[2])
 data.frame(xseq,yseq) 
 }
-# plot
+
 npoints <- 201
+# prediction with fit values
 curves <- dat %>%
   split(.$cue) %>%
   map_df(fitting)
 curves$cue <-rbind(matrix(rep("standard",npoints)), matrix(rep("test",npoints)))
 
+# plot
 p<- psychometric %>%
   ggplot(aes(x=RMScontrast,y=avePct,group=cue,color=cue)) +
   geom_pointrange(aes(ymin=avePct-se, ymax=avePct+se)) +
@@ -253,12 +295,17 @@ p<- psychometric %>%
 p
 ```
 
-####Figure 4b. 
+  
+  
+####Key statistics: *Paired-samples t*
 
-![Figure 4b from Stormer & Alvarez](../writeup/figures/figure4b.png)
+<!-- ![Figure 4b from Stormer & Alvarez](../writeup/figures/figure4b.png) -->
+<img src="../writeup/figures/figure4b.png" alt="Drawing" style="width: 300px;" />
+
 "The bar graph (b) shows the percentage of matched-face trials (Contrast Level 3) in which the test face was judged to have higher contrast than the standard face in each of the cue conditions. Error bars represent ±1 SEM (within subjects). *p<.05."
 
 ```{r}
+# matched-face trials
 d_t <- tbl[tbl$testContrast=="3",]
 d_t <- d_t %>%
   group_by(workerid) %>%
@@ -284,17 +331,21 @@ bar %>%
    theme(legend.position="none")
 ```
 
-
-####paired sample t-test
+Conduct a paired t-test (test VS standard face, Contrast=3)
 ```{r}
 #conduct a paired t-test (test VS standard face, Contrast=3)
-d_t
+head(d_t)
 ttest<-t.test(pctTest ~ cue, d_t, paired=TRUE)
 ttest
+# cohen's effect size measure
 dz<-cohensD(pctTest ~ cue, data=d_t, method="paired")
 print(dz)
 
 ```
+
+We confirmed the original finding that the attended (cued) face was judged to have higher contrast than the same face that was unattended (`r bar$avePct[2]`% vs. `r bar$avePct[1]`%), $t$ = `r ttest$statistic`, $p$ = `r ttest$p.value`, $\eta^2$ = `r coeff$ges[3]`. 
+
+The original paper reported 55.8% vs. 45.8%, $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30.
 
 ###Exploratory analyses
 
@@ -327,50 +378,63 @@ logplot <- df %>%ggplot(aes(x=rms,y=choice)) +
              position=position_jitter(width =.006,height = .04)) +
   geom_line(data=curve_log,aes(x=xseq,y=yseq,color=cue)) +
   ggthemes::theme_few() +
-  geom_point(data=tb,aes(x=rms, y=pctTest/100, color=cue))
+  theme(legend.position="none") +
+  geom_point(data=tb,aes(x=rms, y=pctTest/100, color=cue)) +
+  ylab("p")
 return(logplot)
 }
 
 ```
 
 ```{r}
-# for loop to
+# for loop to generate figures for each participant
 workerID=unique(d$workerid)
 plots <- list()
 for (i in 1:numWorkers) {
   plots[[i]] <- logFit(d[d$workerid==workerID[i],], tbl[tbl$workerid==workerID[i],])
 }
-
+# plotting all
 do.call(grid.arrange,plots)
-
+# a participant
+plots[[1]]
 ```
 
 ####Mixed effects logistic regression
 ```{r}
-# model comparisons?
-mixedLog1 <- glmer(choice ~ cue * rms + (1|workerid), family = "binomial", d)
-mixedLog2 <- glmer(choice ~ cue + rms + (1|workerid), family = "binomial", d)
-anova(mixedLog1,mixedLog2)
-mixedLog3 <- glmer(choice ~ cue + rms + (1+cue|workerid), family = "binomial", d)
-
-anova(mixedLog2,mixedLog3)
-```
-
-
-Any follow-up analyses desired (not required).  
-```{r}
-#examine individual difference
-d_t %>%
+#First examine individual differences
+d_t %>% #only matched trials here
   ggplot(aes(x=cue,y=pctTest,group=workerid, color=workerid)) +
   geom_line() +
-  geom_point(size=2)
+  geom_point(size=2, shape=21)
 ```
+
+```{r warning=FALSE}
+# model comparisons?
+# random intercept
+mixedLog1 <- glmer(choice ~ cue + rms + (1|workerid), family = "binomial", d)
+mixedLog2 <- glmer(choice ~ cue * rms + (1|workerid), family = "binomial", d)
+anova(mixedLog1,mixedLog2)
+# random slope
+mixedLog3 <- glmer(choice ~ cue + rms + (1+cue|workerid), family = "binomial", d)
+anova(mixedLog1,mixedLog3)
+mixedLog4 <- glmer(choice ~ cue + rms + (1+cue+rms|workerid), family = "binomial", d)
+anova(mixedLog4,mixedLog3)
+# item
+mixedLog5 <- glmer(choice ~ cue + rms + (1+cue+rms|workerid) + (1|whichSet), family = "binomial", d)
+anova(mixedLog5,mixedLog4)
+
+summary(mixedLog4)
+
+sjp.glmer(mixedLog4, y.offset = .4)
+```
+
+
 ## Discussion
 
 ### Summary of Replication Attempt
 
-Open the discussion section with a paragraph summarizing the primary result from the confirmatory analysis and the assessment of whether it replicated, partially replicated, or failed to replicate the original result.  
+<!--Open the discussion section with a paragraph summarizing the primary result from the confirmatory analysis and the assessment of whether it replicated, partially replicated, or failed to replicate the original result.  -->
 
 ### Commentary
 
-Add open-ended commentary (if any) reflecting (a) insights from follow-up exploratory analysis, (b) assessment of the meaning of the replication (or not) - e.g., for a failure to replicate, are the differences between original and present study ones that definitely, plausibly, or are unlikely to have been moderators of the result, and (c) discussion of any objections or challenges raised by the current and original authors about the replication attempt.  None of these need to be long.
+<!--Add open-ended commentary (if any) reflecting (a) insights from follow-up exploratory analysis, (b) assessment of the meaning of the replication (or not) - e.g., for a failure to replicate, are the differences between original and present study ones that definitely, plausibly, or are unlikely to have been moderators of the result, and (c) discussion of any objections or challenges raised by the current and original authors about the replication attempt.  None of these need to be long.-->
