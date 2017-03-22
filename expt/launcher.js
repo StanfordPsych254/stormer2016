@@ -80,13 +80,19 @@ function submitInfo() {
     allData.gender = $('input[name="gender"]:checked').val();
     allData.feedback = $("#feedback").val();
     allData.comments = $("#feedback2").val();
+    
+    showSlide("debrief");
+    // submitData();
+}
 
+function submitToMturk() {
+
+    showSlide("submit");
     setTimeout(function() { turk.submit(allData) }, 1500);
     var json = JSON.stringify(allData)
     console.log(json)
-    showSlide("submit");
-    wait(3000, function() {showSlide("debrief")});
-    // submitData();
+
+
 }
 
 // to skip

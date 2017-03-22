@@ -62,6 +62,11 @@ my-own-auth.json
 mturk/
 mturk/auth.json
 mturk/settings.json
+anonymizer/
+production-results/
+anonymized-results/
+sandbox-results alias
+Replication_Report__files/
 
 # Specific file keep
 !README.md

@@ -112,28 +112,37 @@ library(lsr)
 library(ez)
 library(gridExtra)
 library(lme4)
+theme_set(ggthemes::theme_few())
 ```
 
 ```{r error=FALSE, warning=FALSE}
 ###Data Preparation
 path <- "~/class/StanfordPsych254/stormer/"
-files <- dir(paste0(path,"mturk/sandbox-results/"), 
+files <- dir(paste0(path,"anonymized-results/"), 
              pattern = "*.json")
 d.raw <- data.frame()
 
 ####Import data
 for (f in files) {
-  jf <- paste0(path, "mturk/sandbox-results/",f)
+  jf <- paste0(path, "anonymized-results/",f)
   jd <- jsonlite::fromJSON(paste(readLines(jf)), flatten=TRUE)
-  stimCond <- jd$answers$data$stimCond
-  resp <- jd$answers$data$data
+  expt <-jd$answers$data$experiment
+  stimcond <- data.frame(face=na.omit(expt$face),
+                     cue=na.omit(expt$cue),
+                     cueLoc=na.omit(expt$cueLoc),
+                     leftUp=na.omit(expt$leftUp),
+                     testPos=na.omit(expt$testPos),
+                     testContrast=na.omit(expt$testContrast),
+                     rt=na.omit(expt$rt),
+                     keypress=na.omit(expt$keypress),
+                     ITI=na.omit(expt$ITI))
   id <- data.frame(workerid = jd$WorkerId)
-  id <- cbind(id,stimCond,resp)
+  id <- cbind(id,stimcond)
 
   d.raw <- bind_rows(d.raw, id)
 }
 # Number of participants
-length(unique(d.raw$workerid))
+numWorkers = length(unique(d.raw$workerid))
 ```
 <!---#### Data exclusion / filtering
 #  TBD --->
@@ -173,7 +182,7 @@ tbl <- tbl %>%
 #### Manipulation check: ANOVA
 ```{r warning=FALSE}
 anova1 <- ezANOVA(data=tbl, dv=pctTest, wid=workerid,within=testContrast,within_full=cue,detailed=TRUE)
-print(anova1$ANOVA)
+print(anova1)
 ```
 
 <!-- *Side-by-side graph with original graph is ideal here* -->
@@ -230,8 +239,7 @@ curves$cue <-rbind(matrix(rep("standard",npoints)), matrix(rep("test",npoints)))
 
 p<- psychometric %>%
   ggplot(aes(x=RMScontrast,y=avePct,group=cue,color=cue)) +
-  geom_point(size=3) +
-  # geom_pointrange(aes(ymin=avePct-se, ymax=avePct+se)) +
+  geom_pointrange(aes(ymin=avePct-se, ymax=avePct+se)) +
   geom_line(data=curves,aes(x=xseq,y=yseq*100,color=cue)) +
   geom_segment(aes(x=.39,xend=.39, y=-Inf, yend=5),color="black",size=1.4) +
   ggthemes::theme_few()+ 
@@ -279,12 +287,12 @@ bar %>%
 
 ####paired sample t-test
 ```{r}
-# conduct a paired t-test (test VS standard face, Contrast=3)
-# d_test
-# ttest<-t.test(pctTest ~ cue, d_t, paired=TRUE)
-# ttest
-# dz<-cohensD(pctTest ~ cue, data=d_t, method="paired")
-# print(dz)
+#conduct a paired t-test (test VS standard face, Contrast=3)
+d_t
+ttest<-t.test(pctTest ~ cue, d_t, paired=TRUE)
+ttest
+dz<-cohensD(pctTest ~ cue, data=d_t, method="paired")
+print(dz)
 
 ```
 
@@ -299,37 +307,41 @@ d$choice <- as.numeric(d$chosen) - 1
 d$rms <-d$testContrast
 levels(d$rms) <- RMScontrast
 d$rms <- as.numeric(as.character(d$rms))
+tbl$rms <-RMScontrast
 
 # defining a function to perform logistic regression for individual data
-logFit <- function(d,tbl) {
-logreg <- glm(formula = choice ~ cue * rms -1, family = "binomial",d)
-
+logFit <- function(df,tb) {
+logreg <- glm(formula = choice ~ cue + rms - 1, family = "binomial", df)
+#get predicted responses from the model prediction
+xseq <- seq(.3,.5,.001)
 y_t <- predict(logreg,data.frame(cue="test",rms=xseq),type = "response")
 y_s <- predict(logreg,data.frame(cue="standard",rms=xseq),type = "response")
-yset <- data.frame(rbind(matrix(y_s),matrix(y_t)))
-colnames(yset) = "yseq"
-yset$cue <-rbind(matrix(rep("standard",npoints)), matrix(rep("test",npoints)))
-yset$xseq = xseq
+#organize as data frame
+curve_log <- data.frame(rbind(matrix(y_s),matrix(y_t)))
+colnames(curve_log) = "yseq"
+curve_log$cue <-rbind(matrix(rep("standard",npoints)), matrix(rep("test",npoints)))
+curve_log$xseq = xseq
 
-logplot <- d %>%ggplot( aes(x=rms,y=choice)) +
-  geom_point(aes(x=rms, y=choice, color=cue),shape=21, fill=NA,alpha=0.7, 
+logplot <- df %>%ggplot(aes(x=rms,y=choice)) +
+  geom_point(aes(x=rms, y=choice, color=cue),shape=21, fill=NA,alpha=0.7,
              position=position_jitter(width =.006,height = .04)) +
-  geom_line(data=yset,aes(x=xseq,y=yseq,color=cue)) +
+  geom_line(data=curve_log,aes(x=xseq,y=yseq,color=cue)) +
   ggthemes::theme_few() +
-  geom_point(data=tbl,aes(x=rms, y=pctTest/100, color=cue))
-logplot
+  geom_point(data=tb,aes(x=rms, y=pctTest/100, color=cue))
+return(logplot)
 }
 
 ```
 
 ```{r}
-# for loop to 
+# for loop to
+workerID=unique(d$workerid)
 plots <- list()
-for (i in 1:4) {
-  plots[[i]] <- logFit(d[d$workerNo==i,], t[tbl$workerNo==i,])
+for (i in 1:numWorkers) {
+  plots[[i]] <- logFit(d[d$workerid==workerID[i],], tbl[tbl$workerid==workerID[i],])
 }
-do.call(grid.arrange,plots)
 
+do.call(grid.arrange,plots)
 
 ```
 
@@ -337,19 +349,21 @@ do.call(grid.arrange,plots)
 ```{r}
 # model comparisons?
 mixedLog1 <- glmer(choice ~ cue * rms + (1|workerid), family = "binomial", d)
-mixedLog2 <- glmer(choice ~ cue * rms + (1|workerid), family = "binomial", d)
+mixedLog2 <- glmer(choice ~ cue + rms + (1|workerid), family = "binomial", d)
 anova(mixedLog1,mixedLog2)
+mixedLog3 <- glmer(choice ~ cue + rms + (1+cue|workerid), family = "binomial", d)
 
+anova(mixedLog2,mixedLog3)
 ```
 
 
 Any follow-up analyses desired (not required).  
 ```{r}
 #examine individual difference
-# d_test %>%
-#   ggplot(aes(x=cue,y=pctTest,group=workerid, color=workerid)) +
-#   geom_line() +
-#   geom_point(size=2)
+d_t %>%
+  ggplot(aes(x=cue,y=pctTest,group=workerid, color=workerid)) +
+  geom_line() +
+  geom_point(size=2)
 ```
 ## Discussion
 
