@@ -87,11 +87,11 @@ function submitInfo() {
 
 function submitToMturk() {
 
+    allData.submitTime = new Date();
     showSlide("submit");
     setTimeout(function() { turk.submit(allData) }, 1500);
     var json = JSON.stringify(allData)
     console.log(json)
-
 
 }
 

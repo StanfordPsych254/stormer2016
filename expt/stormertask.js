@@ -112,89 +112,18 @@ function getTime(pageID) {
     allData.data.push(data);
 };
 
-// checking window size every 30 seconds
- //code goes here that will be run every 1 second (note-  should be changed to 30)
-// var isActive = true;
-// function checkIt(){
-//   nCheck = 1
-//   var myTimer = setInterval(function(){ 
-//         if(instructionPart != "questions") { // if you're not at questions yet...
-//           experiment.recordWindow("windowCheck_" + nCheck);
-
-//           window.onfocus = function () { 
-//             isActive = true; 
-//           }; 
-
-//           window.onblur = function () { 
-//             isActive = false; 
-//           }; 
-
-//         } else {
-//           clearInterval(myTimer);
-//         }
-//         console.log(isActive);
-//         nCheck ++;
-//   }, 10000);
-// }
-
-// // Submitting data
-
-//  var recordWindow= function(name) {
-//     var windowHeight = $(window).height();
-//     var windowWidth = $(window).width();
-//     data = {
-//       question: name,
-//       answer: windowHeight + " by " + windowWidth + "; active=" + isActive
-//     };
-//     allData.push(data);
-//   }
-
 var saveFingerprint =  function() {
   data = {
     question: "fingerprint",
     answer: fingerprint
   };
   allData.data.push(data);
+  allData.startTime = new Date();
 }
 
 var lastTime = new Date(); // initialize time on load
 
-//$z.showSlide("questions5"); // for testing
 $z.showSlide("instructions1"); // This is where the task starts
-// $z.showSlide("start-practice");
-// showSlide("practice-end");
-
-
-// TODO: 
-// [ ] Put launcher into Mturk and test it.
-// [ ] Transfer data to launch screen
-// [ ] binned randomized group?
-
-
-function submitInfo() {
-  $(document.body).css("cursor","auto")
-  if ($('#age').val()=="" || !$('input[name="gender"]:checked').val()) {
-    alert("Please enter your age and sex. These information are important for our study.");
-      return
-    };
-    allData.age=[];
-    allData.gender=[];
-    allData.feedback=[];
-    allData.age = $('#age').val();
-    allData.gender = $('input[name="gender"]:checked').val();
-    allData.feedback = $("#feedback").val();
-    allData.comments = $("#feedback2").val();
-
-    submitData();
-}
-function submitData() {
-  setTimeout(function() { turk.submit(allData) }, 1500);
-  showSlide("submit");
-  wait(3000, function() {showSlide("debrief")})
-  var json = JSON.stringify(allData)
-    console.log(json)
-}
-
 
 var imgArray = new Array();
 function preload() {
@@ -528,7 +457,7 @@ var practice = {
               // stimulus: n,
               // accuracy: realParity == userParity ? 1 : 0,
               rt: endTime - startTime,
-              trial: practice.ntrial
+              trial: practice.nTrial
             };
         if (!pracRepeat){
           allData.practice.push(response);

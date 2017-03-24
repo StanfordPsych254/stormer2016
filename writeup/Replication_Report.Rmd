@@ -59,24 +59,24 @@ The experimental procedures were followed precisely, except for the following ch
 * Participants practiced the task at lower speed in some portion of practice trials.
 
 ###Analysis Plan
->There was a main effect of actual contrast level on contrast judgments, $F$(4, 15) = 27.93, $p$= .0001, $\eta^2$ = .31. Participants chose the face with higher contrast around the eye region more often than the face with lower contrast around the eye region. As in the previous experiments, our main analysis focused on the matched-face trials, in which identical faces were presented at Contrast Level 3. As shown in Figure 4b, when the two faces were physically identical, participants tended to judge the face at the cued location to have higher contrast than the face at the uncued location (55.8% vs.45.8%), $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30.
+>There was a main effect of actual contrast level on contrast judgments, $F$(4, 15) = 27.93, $p$= .0001, $\eta^2$ = .31. Participants chose the face with higher contrast around the eye region more often than the face with lower contrast around the eye region. As in the previous experiments, our main analysis focused on the matched-face trials, in which identical faces were presented at Contrast Level 3. As shown in Figure 4b, __when the two faces were physically identical, participants tended to judge the face at the cued location to have higher contrast than the face at the uncued location (55.8% vs.45.8%), $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30.__
 
 <!--Can also quote directly, though it is less often spelled out effectively for an analysis strategy section.  The key is to report an analysis strategy that is as close to the original - data cleaning rules, data exclusion rules, covariates, etc. - as possible. --> 
 
 <!--**Clarify key analysis of interest here**  You can also pre-specify additional analyses you plan to do.-->
 
 #### Key Analysis of Interest
-The __dependent variable__ (DV) of interest in Experiment 3 of the original study was __the _percentage_ of trials where participants judged the *"test" face* as having higher contrast than the *"standard" face*__ (contrast fixed at Level 3). Specifically, they focused their analysis on the _"matched-face"_ trials in which the actual contrast of _test_ and _standard_ faces was _identical_ (i.e., both Level 3 and of the same identity). That is, they compared participants' responses from the matched-face trials in the test-cued and the standard-cued conditions to scrutinize __the effect of attentional cue__ (IV) on the contrast judgment, controlling for physical difference. 
+The __dependent variable__ (DV) of interest in Experiment 3 of the original study was __the _percentage_ of trials where participants judged the *"test" face* as having higher contrast than the *"standard" face*__ (contrast fixed at Level 3). Specifically, they focused their analysis on the _"matched-face"_ trials in which the actual contrast of _test_ and _standard_ faces was _identical_ (i.e., both Level 3 and of the same identity). That is, they compared participants' responses from the matched-face trials in Test Face Cued and Standard Face Cued conditions to scrutinize __the effect of attentional cue__ (IV) on the contrast judgment, controlling for physical difference. 
 
 The original authors conducted a _paired-samples t_ test to examine the effect of attention _within_ participants and found that attention had a significant effect on participants' responses (55.8% vs.
 45.8%), $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30 (*d~z~* = `r d_z`).
 
-__The key analysis of interest__ in this replication is, therefore, a _paired-sample t_ test to determine whether or not the mean % choices in the two attentional cueing conditions are equal.  
+#####__The key analysis of interest__ in this replication is, therefore, a _paired-sample t_ test to determine whether or not the percentage of cued faces being chosen is equal to the percentage of uncued faces being chosen.  
   
-  
+    
 As subsidary analyses, we are going to replicate:
 
-* The two-way repeated measures ANOVA to test the main effects and interaction of contrast level and the cue condition.
+* The two-way repeated measures ANOVA to test the main effects of the contrast level and the cue condition.
 
 * Figure 2a showing participants' choices as a function of contrast of the test face, for test face cued and for standard face cued conditions separately.  
   
@@ -93,6 +93,7 @@ The original study was conducted in a highly controlled experimental setting typ
 - Contrast & luminance: Although we will not be able to control the absolute contrast/luminance shown to participants, we expect relative differences between images will be maintained. In addition, we might be able to infer whether different contrasts distinguishable on participants' screen by looking at the effect of contrast on each participant's reponses.
 - Screen dimension & stimulus size: There is a possibility that the size of stimuli or the distance to targets from the fixation point might affect experimental results. It has been well documented that visual task performance is modulated by eccentricity, and it also has been reported that the effect of exogenous attention depends on the size of the cue. However, while it is possible that such factors can make participants' performance vary, we expect that the variance could be explained by a subject factor.
 - We did not include difference face trials which composed 2/3 of the trials. Because only the same face trials were included in the analysis in the original study, we reasoned that this decision would not cause a significant difference in results.
+- We do not have eye tracking data collected from mturk participants, whereas the original authors aborted trials where participants' gaze deviated from the fixation. This difference could have made our data less reliable. We emphasized the importance of fixating in the center repeatedly during the experiment to minimize any possible biases resulted from this limitation so far as possible.
 <!--Explicitly describe known differences in sample, setting, procedure, and analysis plan from original study.  The goal, of course, is to minimize those differences, but differences will inevitably occur.  Also, note whether such differences are anticipated to make a difference based on claims in the original article or subsequent published research on the conditions for obtaining the effect.-->
 
 <!--### Methods Addendum (Post Data Collection)
@@ -125,12 +126,12 @@ library(purrr)
 # library(boot)
 library(lsr)
 library(ez)
+library(grid)
 library(gridExtra)
 library(lme4)
 library(sjPlot)
-# library(sjmisc)
 theme_set(ggthemes::theme_few())
-options(digits=2,nsmall=2)
+options(digits=2)
 
 ```
 
@@ -140,11 +141,11 @@ path <- "~/class/StanfordPsych254/stormer/"
 files <- dir(paste0(path,"anonymized-results/"), 
              pattern = "*.json")
 d.raw <- data.frame()
-
+d_practice <- data.frame()
 ####Import data
 for (f in files) {
   jf <- paste0(path, "anonymized-results/",f)
-  jd <- jsonlite::fromJSON(paste(readLines(jf)), flatten=TRUE)
+  jd <- fromJSON(paste(readLines(jf)))
   expt <-jd$answers$data$experiment
   stimcond <- data.frame(face=na.omit(expt$face),
                      cue=na.omit(expt$cue),
@@ -161,12 +162,52 @@ for (f in files) {
   id <- cbind(id,stimcond,whichFaceSet)
 
   d.raw <- bind_rows(d.raw, id)
+  
+  # load practice data
+  prac <- jd$answers$data$practice
+  pracAns <- data.frame(testContrast = na.omit(prac$testContrast),
+                        testPos=na.omit(prac$testPos),
+                        leftUp=na.omit(prac$leftUp),
+                        keypress=na.omit(prac$keypress))
+  id <- data.frame(workerid = jd$WorkerId)
+  id_p <- cbind(id,pracAns)
+  d_practice <- bind_rows(d_practice,id_p)
 }
+
 # Number of participants
 numWorkers = length(unique(d.raw$workerid))
+
 ```
-<!---#### Data exclusion / filtering
-#  TBD --->
+
+#### Data exclusion / filtering
+```{r}
+# exclude those who got less than 50% correct for contrast level 1 and 5 in the practice run
+d_practice<-d_practice %>%
+  mutate(testVertical = factor(ifelse((testPos=="left"&leftUp==T)|(testPos=="right"&leftUp==F),"up", ifelse((testPos=="left"&leftUp==F)|(testPos=="right"&leftUp==T),"down",NA)))) %>%
+  mutate(correctAns = ifelse(testContrast > 3,"test", ifelse(testContrast < 3,"standard","none"))) %>%
+  mutate(chosen = factor(ifelse(testVertical==keypress,"test","standard"))) %>%
+  mutate(correct = ifelse(chosen==correctAns,1, 
+                                 ifelse(chosen!=correctAns & correctAns!="none", 0,NA)))
+# contrast 1 and 5 trials
+d_prac <- d_practice[d_practice$testContrast==1 | d_practice$testContrast==5, ]
+# % correct
+pracResult <- d_prac %>%
+  group_by(workerid) %>%
+  summarise(correctPer=sum(correct)/n())
+# search subject with % under 50
+exclude <- which(pracResult$correctPer<.5)
+
+d_backup <- d.raw
+for (i in exclude) {
+  exWorker = paste0("anon",i)
+  d <- d[-c(which(d.raw$workerid==exWorker)),]
+}
+
+```
+
+`r length(exclude)` participants were excluded from analysis based on their performance in the practice run.
+
+
 
 #### Prepare data for analysis - create columns etc.
 ```{r}
@@ -178,10 +219,19 @@ d.raw$whichSet <- factor(d.raw$whichSet)
 
 # retrieve the face chosen and the vertical position of target face in each trial
 d<-d.raw %>%
-  mutate(testVertical = factor(ifelse((testPos=="left"&leftUp==T)|(testPos=="right"&leftUp==F),"up",                           ifelse((testPos=="left"&leftUp==F)|(testPos=="right"&leftUp==T),"down",NA)))) %>%
-  mutate(chosen = factor(ifelse(testVertical==keypress,"test","standard")))
+  mutate(testVertical = factor(ifelse((testPos=="left"&leftUp==T)|(testPos=="right"&leftUp==F),"up", ifelse((testPos=="left"&leftUp==F)|(testPos=="right"&leftUp==T),"down",NA)))) %>%
+  mutate(chosen = factor(ifelse(testVertical==keypress,"test","standard"))) %>%
+  mutate(correctAns = ifelse(as.numeric(testContrast) > 3,"test", 
+                             ifelse(as.numeric(testContrast) < 3,"standard","none"))) %>%
+  mutate(correct = ifelse(chosen==correctAns,1, 
+                                 ifelse((chosen!=correctAns & correctAns!="none"), 0,NA)))
 
 head(d)
+
+d_15 <- d[d$testContrast==1 | d$testContrast==5, ]
+exptCorrect <- d_15 %>%
+  group_by(workerid) %>%
+  summarise(correctPer=sum(correct)/n())
 
 # calculate the % of trials where participants answered that "test" face had higher contrast than "standard" face
 tbl <- d %>% 
@@ -203,34 +253,40 @@ tbl <- tbl %>%
 ```
 
 ### Confirmatory analysis
-#### ANOVA: manipulation checks
+#### ANOVA: manipulation check
 ```{r warning=FALSE}
 aov_rep <- ezANOVA(data=tbl, dv=pctTest, wid=workerid,within=.(testContrast,cue),detailed=TRUE)
 print(aov_rep)
+```
 
+``` {r echo=FALSE}
 coeff <- aov_rep$ANOVA
-coeff <- format(coeff,digits=2,nsmall=2)
 coeff$p <- format(coeff$p, scientific=FALSE)
 coeff$DFd <- as.integer(coeff$DFd)
 coeff$DFn <- as.integer(coeff$DFn)
-
 ```
 
-Our repeated-measures analysis of variance (ANOVA) revealed a main effect of physical contrast on contrast judgments, $F$(`r coeff$DFn[2]`, `r coeff$DFd[2]`) = `r coeff$F[2]`, $p$ = `r coeff$p[2]`, $\eta^2$ = `r coeff$ges[2]`. There was no main effect of cue condition, $p$ = `r coeff$p[3]`. <!--However, there was interaction between cue condition and contrast level, $F$(`r coeff$DFn[4]`, `r coeff$DFd[4]`) = `r coeff$F[4]`, $p$ = `r coeff$p[4]`, $\eta^2$ = `r coeff$ges[4]`. -->
-Interaction: $F$(`r coeff$DFn[4]`, `r coeff$DFd[4]`) = `r coeff$F[4]`, $p$ = `r coeff$p[4]`, $\eta^2$ = `r coeff$ges[4]`
+Our repeated-measures analysis of variance (ANOVA) revealed a main effect of physical contrast on contrast judgments, $F$(`r coeff$DFn[2]`, `r coeff$DFd[2]`) = `r coeff$F[2]`, $p$ = `r sprintf("%.2f", as.numeric(coeff$p[2]))`, $\eta^2$ = `r coeff$ges[2]`. 
 
-The original authors only reported the main effect of contrast level in Experiment 3, $F$(4, 15) = 27.93, $p$ = .0001, $\eta^2$ = .31.
+There was no main effect of cue condition, $F$(`r coeff$DFn[3]`, `r coeff$DFd[3]`) = `r coeff$F[3]`, $p$ = `r sprintf("%.2f", as.numeric(coeff$p[3]))`, $\eta^2$ = `r sprintf("%.2f", as.numeric(coeff$ges[3]))`. <!--However, there was interaction between cue condition and contrast level, $F$(`r coeff$DFn[4]`, `r coeff$DFd[4]`) = `r coeff$F[4]`, $p$ = `r coeff$p[4]`, $\eta^2$ = `r coeff$ges[4]`. -->
+Interaction: $F$(`r coeff$DFn[4]`, `r coeff$DFd[4]`) = `r coeff$F[4]`, $p$ = `r sprintf("%.2f", as.numeric(coeff$p[4]))`, $\eta^2$ = `r sprintf("%.2f", as.numeric(coeff$ges[4]))`
 
+The original authors only reported the main effect of contrast level in Experiment 3, $F$(4, 15) = 27.93, $p$ = .0001, $\eta^2$ = .31.  
+
+<br>
 
 <!-- *Side-by-side graph with original graph is ideal here* -->
 #### Replication of Figure 4a. Psychometric functions
+<div style="width: 500px;">
+![**Figure 4a** from Stormer & Alvarez, 2016](../writeup/figures/figure4a.png)
+</div>
+<!-- <img src="../writeup/figures/figure4a.png" alt="Drawing" style="width: 500px;" /> -->
 
-<!-- ![Figure 4a from Stormer & Alvarez](../writeup/figures/figure4a.png) -->
-<img src="../writeup/figures/figure4a.png" alt="Drawing" style="width: 500px;" />
+"The psychometric functions (a) show the percentage of all trials in which participants chose the test face as having higher contrast than the standard face as a function of the test face’s contrast. Error bars represent ±1 SEM (within subjects). *p<.05."  
 
-"The psychometric functions (a) show the percentage of all trials in which participants chose the test face as having higher contrast than the standard face as a function of the test face’s contrast. Error bars represent ±1 SEM (within subjects). *p<.05."
-
-
+<br>
+  
+#### Psychometric curve fit (weibull) using MLE
 ```{r}
 # get mean psychometric data points across subjects
 psychometric <- tbl %>% 
@@ -244,14 +300,9 @@ psychometric <- psychometric %>%
 
 ```
 
-<!-- # psychometric %>%
-#   ggplot(aes(x=RMScontrast,y=avePct,group=cue,color=cue)) +
-#   geom_point(size=3) +
-#   ggthemes::theme_few()
-#   # geom_pointrange(aes(ymin=avePct-se, ymax=avePct+se)) -->
 
-#### Psychometric curve fit (weibull) using MLE
-```{r}
+
+```{r fig.width=6, fig.height=4.8, fig.align="center"}
 RMScontrast = c(.30,.35,.39,.44,.50)
 x<-RMScontrast
 n<-psychometric$sumN #n trial per condition
@@ -259,7 +310,7 @@ k <- psychometric$sumTest # number of times that the observer reports that can s
 y <- k/n
 cue <- psychometric$cue
 dat <- data.frame(cue,x, k,n, y)
-# define function
+# define function that ouputs best function parameters
 fitting <- function(df){
   nll <- function(p) { 
   phi <- pweibull(df$x, p[1], p[2]) 
@@ -270,7 +321,7 @@ xseq <- seq(.3,.5,.001)
 yseq <- pweibull(xseq, para[1], para[2])
 data.frame(xseq,yseq) 
 }
-
+# plotting the curves
 npoints <- 201
 # prediction with fit values
 curves <- dat %>%
@@ -284,35 +335,48 @@ p<- psychometric %>%
   geom_pointrange(aes(ymin=avePct-se, ymax=avePct+se)) +
   geom_line(data=curves,aes(x=xseq,y=yseq*100,color=cue)) +
   geom_segment(aes(x=.39,xend=.39, y=-Inf, yend=5),color="black",size=1.4) +
+  xlim(0.28,0.52)+
   ggthemes::theme_few()+ 
   xlab("Contrast Level of Test Face (RMSE)") +
   ylab("Test Face Chosen (%)") +
   theme(legend.position = c(0,1), legend.justification = c(0,1),
         legend.background= element_rect(fill=NA, color=NA),
         legend.title = element_blank()) +
-  scale_color_discrete(labels=c("Standard Face Cued","Test Face Cued"),
-                       guide=guide_legend(reverse=TRUE))
+        scale_color_brewer(type="qual",palette=6, labels=c("Standard Face Cued","Test Face Cued"), guide=guide_legend(reverse=TRUE))
 p
 ```
+<br><br>
 
-  
-  
+##### Side-by-side comparison with the original graph
+```{r echo=FALSE}
+fig_a <- rasterGrob(png::readPNG("../writeup/figures/figure4a.png"), interpolate=TRUE)
+rep_a <- ggplotGrob(p+theme(legend.text=element_text(size=rel(0.6))))
+
+grid.arrange(arrangeGrob(fig_a,rep_a, ncol=2),heights=unit(0.62, "npc"))
+```
+
+
+
 ####Key statistics: *Paired-samples t*
 
-<!-- ![Figure 4b from Stormer & Alvarez](../writeup/figures/figure4b.png) -->
-<img src="../writeup/figures/figure4b.png" alt="Drawing" style="width: 300px;" />
+<div style="width: 280px;">
+![**Figure 4b** from Stormer & Alvarez, 2016](../writeup/figures/figure4b.png)  
+</div>
+<!-- <img src="../writeup/figures/figure4b.png" alt="Drawing" style="width: 300px;" /> -->
+
 
 "The bar graph (b) shows the percentage of matched-face trials (Contrast Level 3) in which the test face was judged to have higher contrast than the standard face in each of the cue conditions. Error bars represent ±1 SEM (within subjects). *p<.05."
 
-```{r}
+```{r fig.width=3.8, fig.height=3.8, fig.align="center"}
 # matched-face trials
 d_t <- tbl[tbl$testContrast=="3",]
-d_t <- d_t %>%
+d_sum <- tbl %>%
   group_by(workerid) %>%
   mutate(workerMean_3 = mean(pctTest)) %>%
   ungroup() %>%
   mutate(grandMean_3 = mean(workerMean)) %>%
   mutate(newPct3 = pctTest - workerMean_3 + grandMean_3)
+d_t <- d_sum[d_sum$testContrast=="3",]
 
 bar <- d_t %>%
   group_by(cue) %>%
@@ -321,18 +385,22 @@ bar <- d_t %>%
             ntrial=mean(n), aveTestChosen=mean(testChosen),
             sumTest=sum(testChosen), sumN=sum(n))
 
-bar %>%
+bargraph<-bar %>%
   ggplot(aes(x=cue,y=avePct,fill=cue)) +
   geom_bar(stat = "identity", position = "dodge",width = 0.6) +
   geom_linerange(aes(ymin=avePct-se, ymax=avePct+se)) +
   ggthemes::theme_few() + 
   xlab("Face Cued") +
   ylab("Test Face Chosen (%)") +
-   theme(legend.position="none")
+  theme(legend.position="none") + 
+  scale_fill_brewer(type="qual",palette=6)
+bargraph
 ```
+  
+<br>
 
-Conduct a paired t-test (test VS standard face, Contrast=3)
-```{r}
+##### Conduct a paired t test (test vs. standard face, Contrast Level 3)
+```{r warning=FALSE}
 #conduct a paired t-test (test VS standard face, Contrast=3)
 head(d_t)
 ttest<-t.test(pctTest ~ cue, d_t, paired=TRUE)
@@ -343,16 +411,32 @@ print(dz)
 
 ```
 
-<!--We confirmed the original finding that the attended (cued) face was judged to have higher contrast than the same face that was unattended--> (`r bar$avePct[2]`% vs. `r bar$avePct[1]`%), $t$ = `r ttest$statistic`, $p$ = `r ttest$p.value`, $\eta^2$ = `r coeff$ges[3]`. 
+<!--We confirmed the original finding that the attended (cued) face was judged to have higher contrast than the same face that was unattended--> `r bar$avePct[2]`% vs. `r bar$avePct[1]`%, $t$(`r ttest$parameter`) = `r ttest$statistic`, $p$ = `r ttest$p.value`, $\eta^2$ = `r coeff$ges[3]`. 
 
 The original paper reported 55.8% vs. 45.8%, $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30.
+
+```{r echo=FALSE}
+fig_b <- rasterGrob(png::readPNG("../writeup/figures/figure4b.png"), interpolate=TRUE)
+rep_b <- ggplotGrob(bargraph)
+
+grid.arrange(arrangeGrob(fig_b,rep_b, ncol=2),heights=unit(0.7, "npc"))
+```
+
+|  Original  |  Replication  |
+|:----------:|:-------------:|
+| $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30 | $t$(`r ttest$parameter`) = `r ttest$statistic`, $p$ = `r ttest$p.value`, $\eta^2$ = `r coeff$ges[3]` |
+|     |     |
+  
+  
+<p><br></p>
+  
 
 ###Exploratory analyses
 
 ####Logistic regression
-Fitting the logit to our binary response data using the generalized linear model (GLM)
+Fitting the logit to our binary response data using the GLM
 ```{r }
-# prep...
+# data preparation
 # adding a 0/1 binary response column in the raw dset
 d$choice <- as.numeric(d$chosen) - 1
 d$rms <-d$testContrast
@@ -380,13 +464,14 @@ logplot <- df %>%ggplot(aes(x=rms,y=choice)) +
   ggthemes::theme_few() +
   theme(legend.position="none") +
   geom_point(data=tb,aes(x=rms, y=pctTest/100, color=cue)) +
-  ylab("p")
+  ylab("p test") +
+  xlab("RMSE") +
+  scale_color_brewer(type="qual",palette=6)
 return(logplot)
 }
-
 ```
 
-```{r}
+```{r fig.height=8,fig.width=8}
 # for loop to generate figures for each participant
 workerID=unique(d$workerid)
 plots <- list()
@@ -394,21 +479,43 @@ for (i in 1:numWorkers) {
   plots[[i]] <- logFit(d[d$workerid==workerID[i],], tbl[tbl$workerid==workerID[i],])
 }
 # plotting all
-do.call(grid.arrange,plots)
-# a participant
-plots[[1]]
+do.call(grid.arrange,c(plots,ncol=3))
 ```
-
-####Mixed effects logistic regression
+  
+  <br>
+  
+##### Individual differences as a function of test contrast
 ```{r}
-#First examine individual differences
-d_t %>% #only matched trials here
+# examine individual differences
+d_sum %>% #only matched trials here
   ggplot(aes(x=cue,y=pctTest,group=workerid, color=workerid)) +
   geom_line() +
-  geom_point(size=2, shape=21)
+  geom_point(size=2, shape=21) +
+  facet_grid(.~testContrast) +
+  ggtitle("Test Contrast") +
+  xlab("Face Cued") +
+  ylab("Test Face Chosen (%)") +
+  theme(plot.title = element_text(hjust = 0.5,size=rel(1)),
+        legend.position = "bottom") + 
+  scale_color_brewer(type="qual",palette=7)
+```
+  
+  <br>
+  
+#### Mixed effects logistic regression
+```{r warning=FALSE}
+# focusing on contrast level 3 only
+# model comparisons?
+d3 <- d[d$testContrast==3,]
+# random intercept
+log1 <- glmer(choice ~ cue + (1|workerid), family = "binomial", d3)
+#random slope
+log2 <- glmer(choice ~ cue + (1+cue|workerid), family = "binomial", d3)
+anova(log1,log2)
 ```
 
 ```{r warning=FALSE}
+# including all contrast levels.....
 # model comparisons?
 # random intercept
 mixedLog1 <- glmer(choice ~ cue + rms + (1|workerid), family = "binomial", d)
@@ -419,16 +526,20 @@ mixedLog3 <- glmer(choice ~ cue + rms + (1+cue|workerid), family = "binomial", d
 anova(mixedLog1,mixedLog3)
 mixedLog4 <- glmer(choice ~ cue + rms + (1+cue+rms|workerid), family = "binomial", d)
 anova(mixedLog4,mixedLog3)
-# item
-mixedLog5 <- glmer(choice ~ cue + rms + (1+cue+rms|workerid) + (1|whichSet), family = "binomial", d)
-anova(mixedLog5,mixedLog4)
+# item effect
+# mixedLog5 <- glmer(choice ~ cue + rms + (1+cue+rms|workerid) + (1|whichSet), family = "binomial", d)
+## model doesn't converge...
+# anova(mixedLog5,mixedLog4)
 
 summary(mixedLog4)
 
+sjp.setTheme(axis.textsize.x = 0.7)
 sjp.glmer(mixedLog4, y.offset = .4)
 ```
 
 
+***
+  
 ## Discussion
 
 ### Summary of Replication Attempt
