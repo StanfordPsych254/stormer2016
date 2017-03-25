@@ -70,7 +70,7 @@ var experiment = {
 function submitInfo() {
   $(document.body).css("cursor","auto")
   if ($('#age').val()=="" || !$('input[name="gender"]:checked').val()) {
-    alert("Please enter your age and sex. These information are important for our study.");
+    alert("Please enter your age and gender. These information are important for our study.");
       return
     };
     allData.age=[];

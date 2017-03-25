@@ -31,6 +31,15 @@
 				In the example below, the image on the right has <strong>higher</strong> contrast than the image on the left. <br>
 				<center><img src="images/contrastExample.jpg" width="480" align="middle" alt="contrastExample"></center>
 			</p>
+			<button class="zen" type="button" onclick="
+				getTime('instructions1');
+				nextInstruction()">NEXT</button>
+			</div>
+		</div>
+
+		<div class="zen-slide" id="instructions2">
+			<div style="font-size:20px">
+			<p></p>
 			<p style="text-align: center">
 			 Look at the faces below. Do they have the same or different contrast?
 			 <center><img src="images/FaceStim/img1_contrast3.png" style="width:140">  &nbsp;&nbsp;&nbsp; <img src="images/FaceStim/img1_contrast2.png" style="width:140"> </center>
@@ -39,17 +48,18 @@
 				<input type="radio" name="devices" value="off" onclick="hideHiddenEnable('contrastCheck')">DIFFERENT<br>
 				<button id="contrastCheck" class="zen" type="button" onclick="
 				saveFingerprint();
-				getTime('instructions1');
+				getTime('instructions2');
 				nextInstruction()" disabled=>NEXT</button>
 				<div class="hideToShow warning">
 				 	<p> You have indicated that the faces seem to have the same contrast. 
 				 	It is very important that you are able to see even tiny contrast differences on your monitor for this experiment. 
 				 	Please do not continue and return this HIT unless you can detect the difference in contrast between the images. </p> 
-
 				</div>
-			</div>
-		</div>
-		<div class="zen-slide" id="instructions2">
+				</div>
+		</div>	
+
+
+		<div class="zen-slide" id="instructions3">
 			<div class="zen-slide-center">
 				<p>
 					Are all devices that could possibly distract you turned off in your room? (This includes phones, televisions, radios, iTunes, and anything else that could potentially distract you).
@@ -60,7 +70,7 @@
 				experiment.getTime('instructions2');
 				nextInstruction()" disabled="disabled">NEXT</button> -->
 				<button id="deviceCheck" class="zen" type="button" onclick="
-				getTime('instructions2');
+				getTime('instructions3');
 				randomize()" disabled="disabled">NEXT</button>
 				<div class="hideToShow warning">
 					<p>
@@ -73,7 +83,7 @@
 			</div>
 		</div>
 		
-		<div class="zen-slide" id="instructions3">
+		<div class="zen-slide" id="instructions4">
 			<div style="font-size:0.9em">
 				<p>
 					A few more things before we begin:
@@ -96,12 +106,12 @@
 					Please click 'Next' when you have taken care of these things.
 				</p>
 				<button class="zen" type="button" onclick="
-				getTime('instructions3');
+				getTime('instructions4');
 				preload(preloadComplete);">NEXT</button>
 			</div>
 		</div>
 		
-		<div class="zen-slide" id="instructions4">
+		<div class="zen-slide" id="instructions5">
 			<!-- <div class="zen-slide-center"> -->
 			<p style="position:relative; text-align:justify;font-size:0.9em"> Thank you for participating in our study.<br> In this experiment, you will be asked to compare contrast of faces.</p>
  				<div class="inst-box">
@@ -115,14 +125,14 @@
 				<!-- <p>	<button class="inst-button" type="button" onclick="this.blur(); instruction2()">Next</button></p> -->
 				<p></p>
 				<button class="zen" type="button" onclick="
-				getTime('instruction4');
+				getTime('instruction5');
 				nextInstruction()" style="font-size:0.5em;width:auto">Click for further instructions</button>
  				</div>
 
 			<!-- </div> -->
 		</div>
 
-		<div class="zen-slide" id="instructions5" style="font-size:0.9em">
+		<div class="zen-slide" id="instructions6" style="font-size:0.9em">
 			<p>You will be shown two faces in each trial. Judge which of two faces has higher contrast around the eyes 
 			<span style="color:red"><strong>while looking at the fixation cross</strong></span> in the center.<br>
 			Report the relative <strong>vertical position</strong> of the face you chose using<br> <span id="arrow-key">UP &#8593;</span> 
@@ -149,21 +159,22 @@
 				</div>
 				<p><br></p>
 				<button class="zen" type="button" onclick="
-				getTime('instructions5');
+				getTime('instructions6');
 				nextInstruction()" style="font-size:0.8em">NEXT</button>
+				<p></p>
 			</div>
 		</div>
 
-		<div class="zen-slide" id="instructions6">
+		<div class="zen-slide" id="instructions7">
 			<p style="margin-top:25px"><br><br>Let's practice! Please click 'Next' when you are ready.</p>
 			<button class="zen" type="button" onclick="
-				getTime('instruction6');
+				getTime('instruction7');
 				practice.nextTaskInst()">NEXT</button>
 		</div>
 
 		<div class="zen-slide" id="taskInst">
 			<p></p>
-			<img id="instImg" src="{{}}" ></img>
+			<img id="instImg" ></img>
 			<p id="taskInstText">
 			</p>
 			<button class="zen" type="button" onclick="
@@ -214,8 +225,8 @@
 	<div id="fix-horizontal"> 	
 		<div id="hor-left"></div> <div id="hor-right"></div> 
 <!-- <div class="centerbox"> + </div> -->
-		<img class = "{{}}"  id="left-face" src="{{}}" ></img> <!-- picture horAlgin left-pos -->
-		<img class = "{{}}" id="right-face" src="{{}}" ></img>
+		<img class = "{{}}"  id="left-face"  ></img> <!-- picture horAlgin left-pos -->
+		<img class = "{{}}" id="right-face"  ></img>
 	</div>
 </div>
 <div class="slide expt" id="grey-blank">
@@ -242,17 +253,17 @@
 		<div class="slide" id="practice-end">
 			<div class="centerbox" style="width:600px">
 				You have completed the practice run. <br>Please click 'Next' to continue to the actual experiment. <br>
-				<div class="hideToShow"> If you want to practice one more time before starting the experiment, click 'Practice again'.</div>
+				<!-- <div class="hideToShow"> If you want to practice one more time before starting the experiment, click 'Practice again'.</div> -->
 				<p></p>
 				<button class="zen" type="button" onclick="
 				experiment.intro();getTime('practice-end');" style="font-size:1em">Next</button>
-				<button class="zen hideToShow" type="button" onclick="
-				practice.pracAgain()" style="font-size:1em;display: inline-block;">Practice again</button>
+				<!-- <button class="zen hideToShow" type="button" onclick="
+				practice.pracAgain()" style="font-size:1em;display: inline-block;">Practice again</button> -->
 			</div>
 		</div>
 		<div class="slide" id="expt-start">
 			<div class="centerbox" style="width:600px;"> 
-			This experiment consists of three blocks. <p>Please remember to <strong>maintain your gaze on the fixation cross</strong> throughout each block. <span style="font-size: 0.8em">(Do not shift your gaze to images appearing on your screen except the fixation cross!)</span></p>
+			This experiment consists of three blocks. The experiment portion will take about 3 minutes per block.<p>Please remember to <strong>maintain your gaze on the fixation cross</strong> throughout each block. <span style="font-size: 0.8em">(Do not shift your gaze to images appearing on your screen except the fixation cross.)</span></p>
 			You will not see instruction texts this time (e.g.,"Ready", "Up or Down?"). Respond as soon as faces disappear. The next trial will start shortly after you respond. 
 			<p style="text-align: center">Click 'Next' when you are ready to begin. <br><br>
 			<button class="zen" type="button" onclick="
@@ -262,7 +273,8 @@
 
 		<div class="slide expt" id="break">
 			<div class="centerbox" style="font-size:30px">
-			You have completed Block <span id="block-completed">{{}}</span>
+			You have completed Block <span id="block-completed">{{}}</span>. <br>
+			Click Continue when you are ready to start the next block.
 			<p></p>
 			<button class="zen" type="button" onclick="
 				experiment.nextBlock();getTime('break');" style="font-size:1em;text-align: center">Continue</button>
@@ -306,7 +318,7 @@
 	<!-- <script src="stormertask.js"></script> -->
 	<script src="stormertask.js"></script>
 	<script src="js/store.js"></script>
-	<script src="js/fingerprint.js"></script>
+	<script src="js/fingerprint2.js"></script>
 
 
 	</html>
