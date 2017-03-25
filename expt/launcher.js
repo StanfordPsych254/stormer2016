@@ -82,7 +82,6 @@ function submitInfo() {
     allData.comments = $("#feedback2").val();
     
     showSlide("debrief");
-    // submitData();
 }
 
 function submitToMturk() {
@@ -94,23 +93,6 @@ function submitToMturk() {
     console.log(json)
 
 }
-
-// to skip
-var map = []; // Or you could call it "key"
-onkeydown = onkeyup = function(e){
-    e = e || event; // to deal with IE
-    map[e.keyCode] = e.type == 'keydown';
-    /*insert conditional here*/
-    if(map[69] && map[48] && map[49]){ // CTRL+SHIFT+A
-        askSkip();        
-        map = [];
-    };
-}
-var askSkip = function() {
-    var x;
-    $("#enter-id").show();
-}
-
 
 // window.mobilecheck = function() {
 //   var check = false;

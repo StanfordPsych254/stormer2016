@@ -29,26 +29,40 @@ var instructionPart = "instructions"; // Set the instruction prefix to start
 
 var nextInstruction = function(){ // get next slide
 
-if ($(window).width() <= 770) {
+if ($(window).width() <= 780) {
   $z.showSlide("screensmall");
 } else {
     instructionCount++; // add instruction count
   $z.showSlide(instructionPart + instructionCount); // show slide
   $(document).scrollTop(0);// go to top of page
-
 }
 };
 
 var hideHiddenEnable = function(id){
   $(".hideToShow").hide();
   $("#" + id).removeAttr("disabled");
+  if (id=="contrastCheck") {
+    allData.contrastCheck.push("different");
+  } else if (id=="deviceCheck") {
+    allData.deviceCheck.push("yes");
+  }
 }
 
 var showHiddenDisable = function(id){
   $(".hideToShow").show();
   if(id) {
     $("#" + id).attr("disabled",true);
+    if (id=="contrastCheck") {
+    allData.contrastCheck.push("same");
+  } else if (id=="deviceCheck") {
+    allData.deviceCheck.push("no");
   }
+  }
+}
+
+function getParamNames(fn) {
+    var funStr = fn.toString();
+    return funStr.slice(funStr.indexOf('(') + 1, funStr.indexOf(')')).match(/([^\s,]+)/g);
 }
 
 function launchFullScreen(element) {
@@ -118,13 +132,9 @@ var saveFingerprint =  function() {
   new Fingerprint2().get(function(result, components){
   // console.log(result); //a hash, representing your device fingerprint
   // console.log(components); // an array of FP components
-    allData.fingerprint=components;
+    allData.fingerprint.push(result);
+    allData.fingerprint.push(components);
   });
-  data = {
-    question: "fingerprint",
-    answer: Fingerprint2
-  };
-  allData.data.push(data);
 
   fpSaved = new Date();
   data = {
@@ -137,8 +147,8 @@ var saveFingerprint =  function() {
 
 var lastTime = new Date(); // initialize time on load
 
-// $z.showSlide("instructions1"); // This is where the task starts
-showSlide("expt-start");
+$z.showSlide("instructions1"); // This is where the task starts
+// showSlide("expt-start");
 
 var imgArray = new Array();
 function preload() {
@@ -234,6 +244,8 @@ allData.fingerprint=[];
 // allData.data= [];
 allData.time = [];
 allData.whichFaces=[];
+allData.contrastCheck = [];
+allData.deviceCheck = [];
 
 var testContrast = [1,2,3,4,5],
     standardContrast = 3,

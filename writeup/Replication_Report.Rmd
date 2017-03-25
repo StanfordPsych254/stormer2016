@@ -33,7 +33,7 @@ d_z <- t/sqrt(N)
 Based on the computed effect size of *d~z~* = `r d_z`, we performed post hoc power analysis using G*Power. The analysis indicated that the power of the original study was _0.65_. We would need a sample size of _N_ = 22 to achieve 80% power, _N_ = 29 to achieve 90% power, and _N_ = 35 to achieve 95% power to be able to detect the reported effect size. We aim to acieve 80% power. However, to shorten the duration of the experiment for each participant, we are going to split the experiment into halves and double the number of participants. That will give us _N_ = 44.
 
 ###Planned Sample
-We plan to recruit 44 US participants on mTruk. 
+We plan to recruit 44 US participants on the Amazon Mechanical Turk. 
 <!--Planned sample size and/or termination rule, sampling frame, known demographics if any, preselection rules if any.-->
 
 ###Materials
@@ -90,7 +90,7 @@ Finally, we will perform the following additional analyses:
 ###Differences from Original Study
 The original study was conducted in a highly controlled experimental setting typical for psychophysics experiments, whereas our study will be conducted online. We will have less control over the display (e.g., size, luminance, resolution, refresh rate etc.), timing of stimulus presentation, testing environment and so on.
 
-- Contrast & luminance: Although we will not be able to control the absolute contrast/luminance shown to participants, we expect relative differences between images will be maintained. In addition, we might be able to infer whether different contrasts distinguishable on participants' screen by looking at the effect of contrast on each participant's reponses.
+- Contrast & luminance: Although we will not be able to control the absolute contrast/luminance shown to participants, we expect that relative differences between images will be maintained. In addition, we might be able to infer whether different contrasts were distinguishable on participants' screen by looking at the effect of contrast on each participant's reponses.
 - Screen dimension & stimulus size: There is a possibility that the size of stimuli or the distance to targets from the fixation point might affect experimental results. It has been well documented that visual task performance is modulated by eccentricity, and it also has been reported that the effect of exogenous attention depends on the size of the cue. However, while it is possible that such factors can make participants' performance vary, we expect that the variance could be explained by a subject factor.
 - We did not include difference face trials which composed 2/3 of the trials. Because only the same face trials were included in the analysis in the original study, we reasoned that this decision would not cause a significant difference in results.
 - We do not have eye tracking data collected from mturk participants, whereas the original authors aborted trials where participants' gaze deviated from the fixation. This difference could have made our data less reliable. We emphasized the importance of fixating in the center repeatedly during the experiment to minimize any possible biases resulted from this limitation so far as possible.
@@ -176,7 +176,7 @@ for (f in files) {
 }
 
 # Number of participants
-numWorkers = length(unique(d.raw$workerid))
+allWorkers = length(unique(d.raw$workerid))
 
 ```
 
@@ -187,8 +187,7 @@ d_practice<-d_practice %>%
   mutate(testVertical = factor(ifelse((testPos=="left"&leftUp==T)|(testPos=="right"&leftUp==F),"up", ifelse((testPos=="left"&leftUp==F)|(testPos=="right"&leftUp==T),"down",NA)))) %>%
   mutate(correctAns = ifelse(testContrast > 3,"test", ifelse(testContrast < 3,"standard","none"))) %>%
   mutate(chosen = factor(ifelse(testVertical==keypress,"test","standard"))) %>%
-  mutate(correct = ifelse(chosen==correctAns,1, 
-                                 ifelse(chosen!=correctAns & correctAns!="none", 0,NA)))
+  mutate(correct = ifelse(chosen==correctAns,1, ifelse(chosen!=correctAns & correctAns!="none", 0,NA)))
 # contrast 1 and 5 trials
 d_prac <- d_practice[d_practice$testContrast==1 | d_practice$testContrast==5, ]
 # % correct
@@ -203,7 +202,7 @@ for (i in exclude) {
   exWorker = paste0("anon",i)
   d <- d[-c(which(d.raw$workerid==exWorker)),]
 }
-
+numWorkers <- allWorkers - length(exclude)
 ```
 
 `r length(exclude)` participants were excluded from analysis based on their performance in the practice run.
@@ -487,7 +486,7 @@ do.call(grid.arrange,c(plots,ncol=3))
 d_sum %>% #only matched trials here
   ggplot(aes(x=cue,y=pctTest,group=workerid, color=workerid)) +
   geom_line() +
-  geom_point(size=2, shape=21) +
+  geom_point(size=1.6, shape=21) +
   facet_grid(.~testContrast) +
   ggtitle("Test Contrast") +
   xlab("Face Cued") +
