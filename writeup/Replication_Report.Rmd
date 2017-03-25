@@ -50,9 +50,9 @@ The experimental materials used in the original study (i.e., contrast manipulate
 
     "Experiment 3 followed the same procedure as Experiment 1 except for the task instructions. Participants were asked to report the vertical positioning (upward or downward) of the face that appeared to have higher contrast around the eye region by pressing the up- or down-arrow key on a keyboard. Prior to the experiment, participants were shown three example stimuli and were told that contrast varied around the eye region. As in the other experiments, participants were told that the black dot (the attentional cue) was task irrelevant." 
 
-The experimental procedures were followed precisely, except for the following changes:
+The experimental procedures were followed precisely, excxept for the following changes:
 
-* The presentation of stimuli was controlled by Java.
+* The presentation of stimuli was controlled by javascript.
 * As mentioned before, we did not have control over the size, resolution and refresh rate of displays. Also, the testing environments were considerably different from the original study -- Turkers' presumably worked from their home viewing the screen at a random distance without a chin rest and without an eye tracker recording their gaze positions.
 * There were also a few differences in the duration of stimulus presentation. Considering that the most common refresh rates for computer screens include 30Hz and 60Hz, we fixed the lengths of cue and face presentation at 66 ms instead of 70 ms and 58 ms, respectively. Thus, the stimulus onset asynchrony (SOA) between the attentional cue and the faces in our version of the experiment was 132 ms which was 4 ms longer than in the original study. However, we did not expect that difference to be effective enough to abolish the attentional cueing effect.
 * To reduce the length of the experiment 10 instead of 20 faces were used for each participant. We splitted the faces into two sets and randomly assigned which set would be used for each participant. The remaining 10 faces appeared in practice trials.
@@ -128,6 +128,7 @@ library(lsr)
 library(ez)
 library(grid)
 library(gridExtra)
+library(scales)
 library(lme4)
 library(sjPlot)
 theme_set(ggthemes::theme_few())
@@ -226,8 +227,6 @@ d<-d.raw %>%
   mutate(correct = ifelse(chosen==correctAns,1, 
                                  ifelse((chosen!=correctAns & correctAns!="none"), 0,NA)))
 
-head(d)
-
 d_15 <- d[d$testContrast==1 | d$testContrast==5, ]
 exptCorrect <- d_15 %>%
   group_by(workerid) %>%
@@ -277,14 +276,14 @@ The original authors only reported the main effect of contrast level in Experime
 
 <!-- *Side-by-side graph with original graph is ideal here* -->
 #### Replication of Figure 4a. Psychometric functions
-<div style="width: 500px;">
-![**Figure 4a** from Stormer & Alvarez, 2016](../writeup/figures/figure4a.png)
-</div>
-<!-- <img src="../writeup/figures/figure4a.png" alt="Drawing" style="width: 500px;" /> -->
+<!-- <div style="width: 400px;"> -->
+<!-- ![**Figure 4a** from Stormer & Alvarez, 2016](../writeup/figures/figure4a.png) -->
+<!-- </div> -->
+<!-- <!-- <img src="../writeup/figures/figure4a.png" alt="Drawing" style="width: 500px;" /> --> 
 
-"The psychometric functions (a) show the percentage of all trials in which participants chose the test face as having higher contrast than the standard face as a function of the test face’s contrast. Error bars represent ±1 SEM (within subjects). *p<.05."  
+<!-- "The psychometric functions (a) show the percentage of all trials in which participants chose the test face as having higher contrast than the standard face as a function of the test face’s contrast. Error bars represent ±1 SEM (within subjects). *p<.05."   -->
 
-<br>
+<!-- <br> -->
   
 #### Psychometric curve fit (weibull) using MLE
 ```{r}
@@ -299,7 +298,6 @@ psychometric <- psychometric %>%
   mutate(RMScontrast = c(.30,.35,.39,.44,.50))
 
 ```
-
 
 
 ```{r fig.width=6, fig.height=4.8, fig.align="center"}
@@ -343,33 +341,30 @@ p<- psychometric %>%
         legend.background= element_rect(fill=NA, color=NA),
         legend.title = element_blank()) +
         scale_color_brewer(type="qual",palette=6, labels=c("Standard Face Cued","Test Face Cued"), guide=guide_legend(reverse=TRUE))
-p
+# p
 ```
-<br><br>
+<br>
 
 ##### Side-by-side comparison with the original graph
-```{r echo=FALSE}
+```{r echo=FALSE, fig.width=8}
 fig_a <- rasterGrob(png::readPNG("../writeup/figures/figure4a.png"), interpolate=TRUE)
 rep_a <- ggplotGrob(p+theme(legend.text=element_text(size=rel(0.6))))
 
-grid.arrange(arrangeGrob(fig_a,rep_a, ncol=2),heights=unit(0.62, "npc"))
+grid.arrange(arrangeGrob(fig_a,rep_a, ncol=2), heights=unit(0.70, "npc"))
 ```
-
 
 
 ####Key statistics: *Paired-samples t*
 
-<div style="width: 280px;">
-![**Figure 4b** from Stormer & Alvarez, 2016](../writeup/figures/figure4b.png)  
-</div>
+<!-- <div style="width: 250px;"> -->
+<!-- ![**Figure 4b** from Stormer & Alvarez, 2016](../writeup/figures/figure4b.png)   -->
+<!-- </div> -->
 <!-- <img src="../writeup/figures/figure4b.png" alt="Drawing" style="width: 300px;" /> -->
 
-
-"The bar graph (b) shows the percentage of matched-face trials (Contrast Level 3) in which the test face was judged to have higher contrast than the standard face in each of the cue conditions. Error bars represent ±1 SEM (within subjects). *p<.05."
+<!-- "The bar graph (b) shows the percentage of matched-face trials (Contrast Level 3) in which the test face was judged to have higher contrast than the standard face in each of the cue conditions. Error bars represent ±1 SEM (within subjects). *p<.05." -->
 
 ```{r fig.width=3.8, fig.height=3.8, fig.align="center"}
 # matched-face trials
-d_t <- tbl[tbl$testContrast=="3",]
 d_sum <- tbl %>%
   group_by(workerid) %>%
   mutate(workerMean_3 = mean(pctTest)) %>%
@@ -393,16 +388,14 @@ bargraph<-bar %>%
   xlab("Face Cued") +
   ylab("Test Face Chosen (%)") +
   theme(legend.position="none") + 
+  scale_y_continuous(limits = c(30, NA),oob = rescale_none) +
   scale_fill_brewer(type="qual",palette=6)
-bargraph
+# bargraph
 ```
-  
-<br>
 
 ##### Conduct a paired t test (test vs. standard face, Contrast Level 3)
 ```{r warning=FALSE}
 #conduct a paired t-test (test VS standard face, Contrast=3)
-head(d_t)
 ttest<-t.test(pctTest ~ cue, d_t, paired=TRUE)
 ttest
 # cohen's effect size measure
@@ -415,12 +408,16 @@ print(dz)
 
 The original paper reported 55.8% vs. 45.8%, $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30.
 
-```{r echo=FALSE}
+<br><br>
+
+##### Side-by-side comparison with the original graph
+```{r echo=FALSE, fig.height=3.8}
 fig_b <- rasterGrob(png::readPNG("../writeup/figures/figure4b.png"), interpolate=TRUE)
 rep_b <- ggplotGrob(bargraph)
 
-grid.arrange(arrangeGrob(fig_b,rep_b, ncol=2),heights=unit(0.7, "npc"))
+grid.arrange(arrangeGrob(fig_b,rep_b, ncol=2),heights=unit(0.84, "npc"))
 ```
+
 
 |  Original  |  Replication  |
 |:----------:|:-------------:|
