@@ -148,20 +148,13 @@ d_practice <- data.frame()
 for (f in files) {
   jf <- paste0(path, "anonymized-results/",f)
   jd <- fromJSON(paste(readLines(jf)))
-  expt <-jd$answers$data$experiment
-  stimcond <- data.frame(face=na.omit(expt$face),
-                     cue=na.omit(expt$cue),
-                     cueLoc=na.omit(expt$cueLoc),
-                     leftUp=na.omit(expt$leftUp),
-                     testPos=na.omit(expt$testPos),
-                     testContrast=na.omit(expt$testContrast),
-                     rt=na.omit(expt$rt),
-                     keypress=na.omit(expt$keypress),
-                     ITI=na.omit(expt$ITI))
-  id <- data.frame(workerid = jd$WorkerId)
+  stimcond <- jd$answers$data$exptstim
+  resp <- jd$answers$data$exptresp
+  id <- data.frame(workerid=jd$WorkerId)
   whichFaceSet <- data.frame(whichSet = 
-                              as.integer(jd$answers$data$data$answer[4]))
-  id <- cbind(id,stimcond,whichFaceSet)
+                              as.integer(jd$answers$data$whichFaces))
+
+  id <- cbind(id,stimcond,resp,whichFaceSet)
 
   d.raw <- bind_rows(d.raw, id)
   
