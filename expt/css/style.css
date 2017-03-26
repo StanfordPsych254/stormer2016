@@ -260,10 +260,11 @@ p.question-text {
 }
 
 .left-pos {
-    width: 177px;
-    height: 213px;
+  width: 200px;
+ /*   width: 177px;
+    height: 213px;*/
     top:-50%;
-    left: -168px;
+    left: -200px;
     -webkit-transform: translate(-50%, -50%);
     -moz-transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
@@ -271,10 +272,11 @@ p.question-text {
     transform: translate(-50%, -50%);
 }
 .right-pos {
-    width: 177px;
-    height: 213px;
+  width: 200px;
+    /*width: 177px;*/
+    /*height: 213px;*/
     top:-50%;
-    left: 194px;
+    left: 226px;
     -webkit-transform: translate(-50%, -50%);
     -moz-transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
@@ -296,7 +298,7 @@ p.question-text {
     width: 28px;
     height: 28px;
     top: -25px;
-    left: -168px;
+    left: -200px;
     background: black;
     border-radius: 50%;
     -webkit-transform: translate(-50%, -50%);
@@ -311,7 +313,7 @@ p.question-text {
     width: 28px;
     height: 28px;
     top: -25px;
-    left: 194px;
+    left: 226px;
     background: black;
     border-radius: 50%;
     -webkit-transform: translate(-50%, -50%);
