@@ -899,7 +899,7 @@ var experiment = {
     }
     var startTime = (new Date()).getTime();
     if (gotResp) {
-      setTimeout(experiment.nextTrial,5000);
+      setTimeout(experiment.nextTrial,450);
     } else {
     // Set up a function to react to keyboard input. Functions that are used to react to user input are called *event handlers*. In addition to writing these event handlers, you have to *bind* them to particular events (i.e., tell the browser that you actually want the handler to run when the user performs an action). Note that the handler always takes an <code>event</code> argument, which is an object that provides data about the user input (e.g., where they clicked, which button they pressed).
     var keyPressHandler = function(event) {
