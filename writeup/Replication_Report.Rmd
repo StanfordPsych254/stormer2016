@@ -159,11 +159,11 @@ for (f in files) {
   d.raw <- bind_rows(d.raw, id)
   
   # load practice data
-  prac <- jd$answers$data$practice
-  pracAns <- data.frame(testContrast = na.omit(prac$testContrast),
-                        testPos=na.omit(prac$testPos),
-                        leftUp=na.omit(prac$leftUp),
-                        keypress=na.omit(prac$keypress))
+  pracAns <- data.frame(testContrast = na.omit(jd$answers$data$pracstim$testContrast),
+                        testPos=na.omit(jd$answers$data$pracstim$testPos),
+                        leftUp=na.omit(jd$answers$data$pracstim$leftUp),
+                        correct = na.omit(jd$answers$data$pracresp$correct),
+                        keypress=na.omit(jd$answers$data$pracresp$keypress))
   id <- data.frame(workerid = jd$WorkerId)
   id_p <- cbind(id,pracAns)
   d_practice <- bind_rows(d_practice,id_p)
@@ -486,8 +486,7 @@ d_sum %>% #only matched trials here
   xlab("Face Cued") +
   ylab("Test Face Chosen (%)") +
   theme(plot.title = element_text(hjust = 0.5,size=rel(1)),
-        legend.position = "bottom") + 
-  scale_color_brewer(type="qual",palette=7)
+        legend.position = "bottom")
 ```
   
   <br>
