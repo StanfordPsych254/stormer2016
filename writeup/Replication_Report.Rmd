@@ -144,6 +144,7 @@ files <- dir(paste0(path,"anonymized-results/"),
              pattern = "*.json")
 d.raw <- data.frame()
 d_practice <- data.frame()
+idList <- data.frame()
 ####Import data
 for (f in files) {
   jf <- paste0(path, "anonymized-results/",f)
@@ -151,11 +152,11 @@ for (f in files) {
   stimcond <- jd$answers$data$exptstim
   resp <- jd$answers$data$exptresp
   id <- data.frame(workerid=jd$WorkerId)
+  idList <- bind_rows(idList,id)
   whichFaceSet <- data.frame(whichSet = 
                               as.integer(jd$answers$data$whichFaces))
 
   id <- cbind(id,stimcond,resp,whichFaceSet)
-
   d.raw <- bind_rows(d.raw, id)
   
   # load practice data
@@ -171,7 +172,7 @@ for (f in files) {
 
 # Number of participants
 allWorkers = length(unique(d.raw$workerid))
-
+which(duplicated(idList))
 ```
 
 #### Data exclusion / filtering
@@ -194,12 +195,12 @@ exclude <- which(pracResult$correctPer<.5)
 d_backup <- d.raw
 for (i in exclude) {
   exWorker = paste0("anon",i)
-  d <- d[-c(which(d.raw$workerid==exWorker)),]
+  d.raw <- d.raw[-c(which(d.raw$workerid==exWorker)),]
 }
 numWorkers <- allWorkers - length(exclude)
 ```
 
-`r length(exclude)` participants were excluded from analysis based on their performance in the practice run.
+`r length(exclude)` participants were excluded from analysis based on their performance in the practice run (i.e., got less than 50% correct).
 
 
 
@@ -333,7 +334,8 @@ p<- psychometric %>%
   theme(legend.position = c(0,1), legend.justification = c(0,1),
         legend.background= element_rect(fill=NA, color=NA),
         legend.title = element_blank()) +
-        scale_color_brewer(type="qual",palette=6, labels=c("Standard Face Cued","Test Face Cued"), guide=guide_legend(reverse=TRUE))
+        scale_color_brewer(type="qual",palette=6, labels=c("Standard Face Cued","Test Face Cued"), guide=guide_legend(reverse=TRUE)) +
+  scale_y_continuous(limits = c(20, NA),oob = rescale_none)
 # p
 ```
 <br>
@@ -486,7 +488,9 @@ d_sum %>% #only matched trials here
   xlab("Face Cued") +
   ylab("Test Face Chosen (%)") +
   theme(plot.title = element_text(hjust = 0.5,size=rel(1)),
-        legend.position = "bottom")
+        legend.position = "bottom", legend.text=element_text(size=4),
+        legend.title=element_text(size=8), legend.key.size = unit(0.02, "npc")) +
+   guides(color=guide_legend(override.aes=list(size=0.5)))
 ```
   
   <br>
