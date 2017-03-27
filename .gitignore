@@ -72,8 +72,11 @@ mturk/settings.json
 anonymizer/
 production-results/
 anonymized-results/
+anonymized-results-pilotB/
 sandbox-results alias
 Replication_Report__files/
+gatherComments.Rmd
+writeup/rsconnect/
 
 # Specific file keep
 !README.md

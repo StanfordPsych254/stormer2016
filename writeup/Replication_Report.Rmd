@@ -48,7 +48,7 @@ The experimental materials used in the original study (i.e., contrast manipulate
 
     "The experiment was conducted in a dimly lit room, and the stimuli were presented on a 15-in. CRT display (1,280 × 1,024 pixels; 85 Hz) whose background color was set to gray (111 cd/m2). Participants viewed the stimuli at a distance of 57 cm, and a chin rest was used to stabilize their heads. Participants’ gaze was tracked with an eye tracker (EyeLink 1000, SR Research Ltd., Mississauga, Ontario, Canada) to ensure fixation. The experiment was run in MATLAB using the Psychophysics Toolbox (Brainard, 1997; Pelli, 1997).
     Participants were instructed to maintain their gaze on the fixation cross in the center of the gray screen throughout each experimental block. When they moved their gaze more than 1.5° away from fixation, the trial was aborted. At the beginning of each trial, a black circle appeared briefly (~70 ms) on either the left or the right side of the screen. After another 58 ms, face images were presented simultaneously on the left and right for 58 ms (Fig. 1a). Thus, the stimulus onset asynchrony (SOA) between the attentional cue and the faces was 128 ms. After the offset of the faces, the gray screen with the fixation cross was presented until the participant responded. The intertrial interval varied from 1.0 to 1.5 s. On two thirds of the trials, two different faces were randomly selected from the set of 20 faces to be presented as the target display. One of the faces was presented at the standard contrast (Level 3), and the other face was presented at one of the test contrasts (Levels 1–5). On the other third of the trials, the exact same face was presented on the left and right at the standard contrast. These trials were included so that we could compare responses to cued and uncued faces while all physical attributes of the two faces were matched. The analyses of the effects of the attentional cue on attractiveness judgments focused on these matched-face trials." (from Störmer & Alvarez p.565.)  
-
+    
     "Experiment 3 followed the same procedure as Experiment 1 except for the task instructions. Participants were asked to report the vertical positioning (upward or downward) of the face that appeared to have higher contrast around the eye region by pressing the up- or down-arrow key on a keyboard. Prior to the experiment, participants were shown three example stimuli and were told that contrast varied around the eye region. As in the other experiments, participants were told that the black dot (the attentional cue) was task irrelevant." (from Störmer & Alvarez p.565.) 
 
 The experimental procedures were followed precisely, excxept for the following changes:
@@ -57,7 +57,7 @@ The experimental procedures were followed precisely, excxept for the following c
 * As mentioned before, we did not have control over the size, resolution and refresh rate of displays. Also, the testing environments were considerably different from the original study -- Turkers' presumably worked from their home viewing the screen at a random distance without a chin rest and without an eye tracker recording their gaze positions.
 * There were also a few differences in the duration of stimulus presentation. Considering that the most common refresh rates for computer screens include 30Hz and 60Hz, we fixed the lengths of cue and face presentation at 66 ms instead of 70 ms and 58 ms, respectively. Thus, the stimulus onset asynchrony (SOA) between the attentional cue and the faces in our version of the experiment was 132 ms which was 4 ms longer than in the original study. However, we did not expect that difference to be effective enough to abolish the attentional cueing effect.
 * To reduce the length of the experiment 10 instead of 20 faces were used for each participant. We splitted the faces into two sets and randomly assigned which set would be used for each participant. The remaining 10 faces appeared in practice trials.
-* Participants practiced the task at lower speed in some portion of practice trials.
+* Participants completed 20 practice trials instead of 40 trials prior to the experiment. Only Level 1 and 5 contrast levels were used as the contrast of the test face, and the first twelve trials were slow-paced than the original experiment.
 
 ###Analysis Plan
 >There was a main effect of actual contrast level on contrast judgments, $F$(4, 15) = 27.93, $p$= .0001, $\eta^2$ = .31. Participants chose the face with higher contrast around the eye region more often than the face with lower contrast around the eye region. As in the previous experiments, our main analysis focused on the matched-face trials, in which identical faces were presented at Contrast Level 3. As shown in Figure 4b, __when the two faces were physically identical, participants tended to judge the face at the cued location to have higher contrast than the face at the uncued location (55.8% vs.45.8%), $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30.__ (from Störmer & Alvarez p.568.)
@@ -97,16 +97,15 @@ The original study was conducted in a highly controlled experimental setting typ
 - We do not have eye tracking data collected from mturk participants, whereas the original authors aborted trials where participants' gaze deviated more than 1.5° away from the fixation. This difference could have made our data less reliable. We emphasized the importance of fixating in the center repeatedly during the experiment to minimize any possible biases resulted from this limitation so far as possible.
 <!--Explicitly describe known differences in sample, setting, procedure, and analysis plan from original study.  The goal, of course, is to minimize those differences, but differences will inevitably occur.  Also, note whether such differences are anticipated to make a difference based on claims in the original article or subsequent published research on the conditions for obtaining the effect.-->
 
-<!--### Methods Addendum (Post Data Collection)
-
-You can comment this section out prior to final report with data collection.-->
-
+### Methods Addendum (Post Data Collection)
+<!-- You can comment this section out prior to final report with data collection. -->
 #### Actual Sample
 <!-- Sample size, demographics, data exclusions based on rules spelled out in analysis plan -->
+Forty-four mTurkers participated in the experiment. Participants who got less than 50% of practice trials correct were excluded from the analysis. The remaining **thirty-nine** participants (13 female, 26 male) were between the ages of 21 and 65 years old (mean = 36).
 
 #### Differences from pre-data collection methods plan
 <!--  Any differences from what was described as the original plan, or “none”. -->
-
+None.
 
 ***
 
@@ -135,6 +134,15 @@ library(sjPlot)
 theme_set(ggthemes::theme_few())
 options(digits=2)
 
+## some functions for printing p-values
+printp = function(p) {
+  if (p<0.001) {
+    return(sprintf('p=%.3f', p))
+    # return('p<0.001')
+  } else {
+    return(sprintf('p=%.2f', p))
+  }
+}
 ```
 
 ```{r error=FALSE, warning=FALSE}
@@ -248,7 +256,7 @@ tbl <- tbl %>%
 ### Confirmatory analysis
 #### ANOVA: manipulation check
 ```{r warning=FALSE}
-aov_rep <- ezANOVA(data=tbl, dv=pctTest, wid=workerid,within=.(testContrast,cue),detailed=TRUE)
+aov_rep <- ezANOVA(data=tbl, dv=pctTest, wid=workerid, within=.(testContrast,cue),detailed=TRUE)
 print(aov_rep)
 ```
 
@@ -259,10 +267,10 @@ coeff$DFd <- as.integer(coeff$DFd)
 coeff$DFn <- as.integer(coeff$DFn)
 ```
 
-Our repeated-measures analysis of variance (ANOVA) revealed a main effect of physical contrast on contrast judgments, $F$(`r coeff$DFn[2]`, `r coeff$DFd[2]`) = `r coeff$F[2]`, $p$ = `r sprintf("%.2f", as.numeric(coeff$p[2]))`, $\eta^2$ = `r coeff$ges[2]`. 
+Our repeated-measures analysis of variance (ANOVA) revealed a main effect of physical contrast on contrast judgments, $F$(`r coeff$DFn[2]`, `r coeff$DFd[2]`) = `r sprintf("%.2f",coeff$F[2])`, $p$ = `r printp(as.numeric(coeff$p[2]))`, $\eta^2$ = `r sprintf("%.2f",coeff$ges[2])`. 
 
-There was no main effect of cue condition, $F$(`r coeff$DFn[3]`, `r coeff$DFd[3]`) = `r coeff$F[3]`, $p$ = `r sprintf("%.2f", as.numeric(coeff$p[3]))`, $\eta^2$ = `r sprintf("%.2f", as.numeric(coeff$ges[3]))`. <!--However, there was interaction between cue condition and contrast level, $F$(`r coeff$DFn[4]`, `r coeff$DFd[4]`) = `r coeff$F[4]`, $p$ = `r coeff$p[4]`, $\eta^2$ = `r coeff$ges[4]`. -->
-Interaction: $F$(`r coeff$DFn[4]`, `r coeff$DFd[4]`) = `r coeff$F[4]`, $p$ = `r sprintf("%.2f", as.numeric(coeff$p[4]))`, $\eta^2$ = `r sprintf("%.2f", as.numeric(coeff$ges[4]))`
+There was a significant main effect of cue condition (test vs standard), $F$(`r coeff$DFn[3]`, `r coeff$DFd[3]`) = `r coeff$F[3]`, $p$ = `r sprintf("%.3f", as.numeric(coeff$p[3]))`, $\eta^2$ = `r sprintf("%.3f", as.numeric(coeff$ges[3]))`.   <!--However, there was interaction between cue condition and contrast level, $F$(`r coeff$DFn[4]`, `r coeff$DFd[4]`) = `r coeff$F[4]`, $p$ = `r coeff$p[4]`, $\eta^2$ = `r coeff$ges[4]`. -->
+The interaction effect was not significant, $F$(`r coeff$DFn[4]`, `r coeff$DFd[4]`) = `r coeff$F[4]`, $p$ = `r sprintf("%.2f", as.numeric(coeff$p[4]))`, $\eta^2$ = `r sprintf("%.3f", as.numeric(coeff$ges[4]))`.
 
 The original authors only reported the main effect of contrast level in Experiment 3, $F$(4, 15) = 27.93, $p$ = .0001, $\eta^2$ = .31.  
 
@@ -399,7 +407,7 @@ print(dz)
 
 ```
 
-<!--We confirmed the original finding that the attended (cued) face was judged to have higher contrast than the same face that was unattended--> `r bar$avePct[2]`% vs. `r bar$avePct[1]`%, $t$(`r ttest$parameter`) = `r ttest$statistic`, $p$ = `r ttest$p.value`, $\eta^2$ = `r coeff$ges[3]`. 
+<!--We confirmed the original finding that the attended (cued) face was judged to have higher contrast than the same face that was unattended--> The paired t test revealed a marginally significant (p < .10) difference in contrast judgment between Test Face Cued and Standard Face Cued conditions, `r bar$avePct[2]`% vs. `r bar$avePct[1]`%, $t$(`r ttest$parameter`) = `r ttest$statistic`, $p$ = `r ttest$p.value`, $\eta^2$ = `r coeff$ges[3]`. The attended (cued) face tended to be judged to have higher contrast than the same face that was unattended to some degree.
 
 The original paper reported 55.8% vs. 45.8%, $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30.
 
@@ -416,7 +424,7 @@ grid.arrange(arrangeGrob(fig_b,rep_b, ncol=2),heights=unit(0.84, "npc"))
 
 |  Original  |  Replication  |
 |:----------:|:-------------:|
-| $t$(15) = 2.51, $p$ = .02, $\eta^2$ = .30 | $t$(`r ttest$parameter`) = `r ttest$statistic`, $p$ = `r ttest$p.value`, $\eta^2$ = `r coeff$ges[3]` |
+|  $t$(15)=2.51, $p$ = .02, $\eta^2$ = .30  |  $t$(`r ttest$parameter`)=`r ttest$statistic`, $p$ = `r ttest$p.value`, $\eta^2$ = `r coeff$ges[3]`  |
 |     |     |
   
   
@@ -463,7 +471,7 @@ return(logplot)
 }
 ```
 
-```{r fig.height=8,fig.width=8}
+```{r fig.height=16,fig.width=8}
 # for loop to generate figures for each participant
 workerID=unique(d$workerid)
 plots <- list()
@@ -471,7 +479,7 @@ for (i in 1:numWorkers) {
   plots[[i]] <- logFit(d[d$workerid==workerID[i],], tbl[tbl$workerid==workerID[i],])
 }
 # plotting all
-do.call(grid.arrange,c(plots,ncol=3))
+do.call(grid.arrange,c(plots,ncol=4))
 ```
   
   <br>
@@ -489,8 +497,8 @@ d_sum %>% #only matched trials here
   ylab("Test Face Chosen (%)") +
   theme(plot.title = element_text(hjust = 0.5,size=rel(1)),
         legend.position = "bottom", legend.text=element_text(size=4),
-        legend.title=element_text(size=8), legend.key.size = unit(0.02, "npc")) +
-   guides(color=guide_legend(override.aes=list(size=0.5)))
+        legend.title=element_text(size=8), legend.key.size = unit(0.03, "npc")) +
+   guides(color=guide_legend(override.aes=list(size=0.6)))
 ```
   
   <br>
@@ -510,24 +518,25 @@ anova(log1,log2)
 ```{r warning=FALSE}
 # including all contrast levels.....
 # model comparisons?
+d$rms_sc <- scale(d$rms, scale=FALSE)
 # random intercept
-mixedLog1 <- glmer(choice ~ cue + rms + (1|workerid), family = "binomial", d)
-mixedLog2 <- glmer(choice ~ cue * rms + (1|workerid), family = "binomial", d)
+mixedLog1 <- glmer(choice ~ cue + rms_sc + (1|workerid), family = "binomial", d)
+mixedLog2 <- glmer(choice ~ cue * rms_sc + (1|workerid), family = "binomial", d)
 anova(mixedLog1,mixedLog2)
-# random slope
-mixedLog3 <- glmer(choice ~ cue + rms + (1+cue|workerid), family = "binomial", d)
-anova(mixedLog1,mixedLog3)
-mixedLog4 <- glmer(choice ~ cue + rms + (1+cue+rms|workerid), family = "binomial", d)
+# random slope (cue)
+mixedLog3 <- glmer(choice ~ cue * rms_sc + (1+cue|workerid), family = "binomial", d)
+anova(mixedLog2,mixedLog3)
+summary(mixedLog3)
+# random slope (cue, rms)
+mixedLog4 <- glmer(choice ~ cue * rms_sc + (1+cue+rms_sc|workerid), family = "binomial", d)
 anova(mixedLog4,mixedLog3)
-# item effect
-# mixedLog5 <- glmer(choice ~ cue + rms + (1+cue+rms|workerid) + (1|whichSet), family = "binomial", d)
-## model doesn't converge...
-# anova(mixedLog5,mixedLog4)
-
+# # item effect
+mixedLog5 <- glmer(choice ~ cue * rms_sc + (1+cue+rms_sc|workerid) + (1|whichSet), family = "binomial", d)
+anova(mixedLog5,mixedLog4)
 summary(mixedLog4)
 
 sjp.setTheme(axis.textsize.x = 0.7)
-sjp.glmer(mixedLog4, y.offset = .4)
+sjp.glmer(mixedLog4, y.offset = .4, geom.size = 2)
 ```
 
 
@@ -538,7 +547,19 @@ sjp.glmer(mixedLog4, y.offset = .4)
 ### Summary of Replication Attempt
 
 <!--Open the discussion section with a paragraph summarizing the primary result from the confirmatory analysis and the assessment of whether it replicated, partially replicated, or failed to replicate the original result.  -->
+Our confirmatory analysis focused on replicating the effect of the attentional cue on the probability of the test face being chosen using the same key statistical analysis (the paired t test) as in the original study. There was a slight tendency that our mTurk participants judge the face at the cued location to have higher contrast than the face at the uncued location in the contrast of the two faces was matched, but the effect was only marginal (p = .09).  
+
+Instead, in our study, the two-way repeated measures ANOVA with the test face contrast and cue condition as the factors revealed not only the significant main effect of contrast but also the main effect of the cue which was not reported in the original study.
+
+Therefore, our study partially replicated the original results.
 
 ### Commentary
 
 <!--Add open-ended commentary (if any) reflecting (a) insights from follow-up exploratory analysis, (b) assessment of the meaning of the replication (or not) - e.g., for a failure to replicate, are the differences between original and present study ones that definitely, plausibly, or are unlikely to have been moderators of the result, and (c) discussion of any objections or challenges raised by the current and original authors about the replication attempt.  None of these need to be long.-->
+
+Our follow-up exploratory analysis implied that there were substantial individual differences in the cueing effect and contrast judgment across our participants. 
+Despite of our attempt to exclude participants who did not seem to distinguish different contrasts shown during the practice run, we ended up having a considerable number of participants who barely showed any modulation of contrast level in their performance in the first place in our main analysis. But, this is not very surprising as we expected high variance and noise in our data coming from lack of precise control over stimulus presentation and testing environments. Also, we cannot exclude the possibility that some workers were noncompliant due to the nature of online experiments.
+
+Nontheless, our mixed effects logistic regression models indicated a marginally significant cueing effect on contrast judgments after accounting for random interaction between participants and conditions, suggesting some effects of attetion on participants' contrast judgment in our replication study.
+
+
